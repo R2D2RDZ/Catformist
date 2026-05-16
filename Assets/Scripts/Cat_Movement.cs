@@ -1,95 +1,106 @@
+using System.Collections;
 using UnityEngine;
 
 public class Cat_Movement : MonoBehaviour
 {
-    [SerializeField] private float moveSpeed, rotationSpeed, frictionDivisor, jumpForce, gravityForce;
+    [Header("Movement")]
+    [SerializeField] private float moveSpeed;
+    [SerializeField] private float rotationSpeed;
+    [SerializeField] private float frictionDivisor;
+    [SerializeField] private float jumpVelocity;
+    [SerializeField] private float gravityForce;
+
+    [Header("Jump Rotation")]
     [SerializeField] private float jumpVelocityToRotateX;
     [SerializeField] private float[] jumpRotationAngles;
-<<<<<<< Updated upstream
-=======
+
+    [Header("Ground Check")]
     [SerializeField] private float groundCheckRayDis;
     [HideInInspector] public bool isOnGround; // Se usa en Cat_Animations.cs
 
     [Header("Climbing")]
     [SerializeField] private float climbMoveSpeedVer;
-    [SerializeField] private float climbMoveSpeedHor, climbRayDis, limitator, climbJumpVelHor;
+    [SerializeField] private float climbMoveSpeedHor;
+    [SerializeField] private float climbRayDis;
+    [SerializeField] private float limitator;
+    [SerializeField] private float climbJumpVelHor;
+    [SerializeField] private float climbGroundCheckRayDis;
 
-    [Header("Gatocidad")]
-    [SerializeField] private float gatocidadInfluence;
-    [SerializeField] private float gatocidadJump;
-    [SerializeField] private float gatocidadClimb;
-    [SerializeField] private float gatocidadSlash;
+    private bool isHittingWall;
+    private bool canCheckToClimb;
+    private bool isGroundedOnWall;
 
-    private bool isHittingWall, isClimbing, canCheckToClimb;
-
->>>>>>> Stashed changes
-
-
+    [HideInInspector] public bool isClimbing; // Se usa en Cat_Animations.cs
     [HideInInspector] public bool stateStunned;
 
     private Rigidbody rb;
+    private Vector3 velocity;
 
     [HideInInspector] public Vector3 direction2D;
+
     private Vector3 setDirection3D;
+    private Vector3 direction3D;
 
-    private Gatocidad gatocidad;
+    private Vector3 wallNormal;
+    private bool climbRotationLock;
 
-    void Start()
+    private void Start()
     {
         rb = GetComponent<Rigidbody>();
-<<<<<<< Updated upstream
-=======
-        gatocidad = GetComponent<Gatocidad>();
         canCheckToClimb = true;
->>>>>>> Stashed changes
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
-        Vector3 direction3D = new Vector3(direction2D.x, 0, direction2D.y);
+        direction3D = new Vector3(direction2D.x, 0f, direction2D.y);
+
         if (direction3D.magnitude >= 0.1f)
         {
             setDirection3D = direction3D;
         }
 
-<<<<<<< Updated upstream
-        rb.AddForce(direction3D * moveSpeed);
-=======
         velocity = rb.linearVelocity;
 
-        if (isClimbing == false)
+        if (!isClimbing)
         {
             Upt_Move();
             Upt_Rotate();
             Upt_Gravity();
         }
-        else if(gatocidad.GetGatocidad() > gatocidadClimb)
-            { Upt_ClimbMove(); }
-        else {StopClimbing(); }
+        else
+        {
+            Upt_ClimbMove();
+        }
+
         Upt_GroundCheck();
         Upt_CheckIfCanClimb();
     }
 
-
     private void Upt_Move()
     {
-        rb.AddForce(direction3D * moveSpeed * (gatocidad.GetGatocidad()/gatocidadInfluence));
->>>>>>> Stashed changes
+        rb.AddForce(direction3D * moveSpeed);
 
-        Vector3 velocity = rb.linearVelocity;
-        rb.linearVelocity = new Vector3((velocity.x / frictionDivisor), velocity.y, (velocity.z / frictionDivisor));
+        rb.linearVelocity = new Vector3(
+            velocity.x / frictionDivisor,
+            velocity.y,
+            velocity.z / frictionDivisor
+        );
+    }
 
+    private void Upt_Rotate()
+    {
+        if (setDirection3D.sqrMagnitude < 0.01f)
+            return;
 
         Quaternion targetRotation = Quaternion.LookRotation(setDirection3D.normalized);
 
-
         float xAngle = 0f;
 
-        if (velocity.y > jumpVelocityToRotateX)
+        if (rb.linearVelocity.y > jumpVelocityToRotateX)
         {
             xAngle = jumpRotationAngles[0];
         }
-        else if (velocity.y < -jumpVelocityToRotateX)
+        else if (rb.linearVelocity.y < -jumpVelocityToRotateX)
         {
             xAngle = jumpRotationAngles[1];
         }
@@ -97,82 +108,94 @@ public class Cat_Movement : MonoBehaviour
         Quaternion tiltRotation = Quaternion.Euler(xAngle, 0f, 0f);
 
         // Combina la rotación hacia la dirección con la inclinación en X
-        targetRotation = targetRotation * tiltRotation;
+        targetRotation *= tiltRotation;
 
         rb.rotation = Quaternion.Slerp(rb.rotation, targetRotation, rotationSpeed);
+    }
 
+    private void Upt_Gravity()
+    {
         rb.AddForce(Vector3.down * gravityForce);
     }
 
-<<<<<<< Updated upstream
-=======
     private void Upt_GroundCheck()
     {
         Ray ray = new Ray(transform.position, -Vector3.up);
 
+        int groundLayer = LayerMask.NameToLayer("Ground");
+        int groundMask = 1 << groundLayer;
 
-        int wallLayer = LayerMask.NameToLayer("Ground");
-        int wallMask = 1 << wallLayer;
-
-        if (isClimbing == false)
+        if (!isClimbing)
         {
-            isOnGround = Physics.Raycast(ray, out RaycastHit hit, groundCheckRayDis, wallMask);
+            isOnGround = Physics.Raycast(ray, out RaycastHit hit, groundCheckRayDis, groundMask);
         }
         else
         {
             Ray rayGroundedOnWall = new Ray(transform.position, -transform.up);
 
-            bool isGroundedOnWall = Physics.Raycast(rayGroundedOnWall, out RaycastHit hit, groundCheckRayDis, wallMask);
+            isGroundedOnWall = Physics.Raycast(
+                rayGroundedOnWall,
+                out RaycastHit hit,
+                groundCheckRayDis,
+                groundMask
+            );
 
             // No detecta más pared bajo sus pies
-            if (isGroundedOnWall == false)
-            { StopClimbing(); }
-
-
-
-            // Si llega al suelo arrastrandose por la pared
-            bool hitsBottom = Physics.Raycast(ray, out RaycastHit hitBottom, groundCheckRayDis, wallMask);
-            if (hitsBottom)
+            if (!isGroundedOnWall)
             {
                 StopClimbing();
             }
 
-        }
+            // Si llega al suelo arrastrándose por la pared
+            bool hitsBottom = Physics.Raycast(
+                ray,
+                out RaycastHit hitBottom,
+                climbGroundCheckRayDis,
+                groundMask
+            );
 
+            if (hitsBottom)
+            {
+                StartCoroutine(StopCheckingIfCanClimb());
+            }
+        }
     }
 
     private void Upt_ClimbMove()
     {
-        Vector3 wallRight = transform.right;
-        Vector3 wallUp = transform.forward;
-
         Vector3 climbUpVector = transform.forward * climbMoveSpeedVer;
-        if (direction3D.magnitude < 0.1f || direction3D.z < 0)
+
+        if (direction3D.magnitude < 0.1f || direction3D.z < 0f)
         {
-            gatocidad.UseGatocidad(gatocidadClimb);
             climbUpVector = -transform.forward * climbMoveSpeedVer;
         }
-        rb.AddForce((climbUpVector) + (direction2D.x * transform.right * climbMoveSpeedHor));
-        rb.AddForce(-rb.linearVelocity * limitator);
-        rb.AddForce(-transform.up * gravityForce);
 
+        rb.AddForce(climbUpVector + direction2D.x * transform.right * climbMoveSpeedHor);
+        rb.AddForce(-rb.linearVelocity * limitator);
+
+        // Gravedad relativa a la pared
+        rb.AddForce(-transform.up * gravityForce);
     }
 
     private void Upt_CheckIfCanClimb()
     {
-        Ray ray = new Ray(transform.position, new Vector3(transform.forward.x, 0, transform.forward.z));
+        Vector3 rayDirection = new Vector3(transform.forward.x, 0f, transform.forward.z).normalized;
 
+        if (rayDirection.sqrMagnitude < 0.01f)
+            return;
 
-        int wallLayer = LayerMask.NameToLayer("Ground");
-        int wallMask = 1 << wallLayer;
+        Ray ray = new Ray(transform.position, rayDirection);
 
-        isHittingWall = Physics.Raycast(ray, out RaycastHit hit, climbRayDis, wallMask);
+        int groundLayer = LayerMask.NameToLayer("Ground");
+        int groundMask = 1 << groundLayer;
+
+        isHittingWall = Physics.Raycast(ray, out RaycastHit hit, climbRayDis, groundMask);
 
         if (isHittingWall && !isOnGround && canCheckToClimb)
         {
             wallNormal = hit.normal;
 
-            if (climbRotationLock == false)
+            if (!climbRotationLock)
             {
                 Vector3 forwardOnWall = Vector3.ProjectOnPlane(Vector3.up, wallNormal).normalized;
 
@@ -189,29 +212,30 @@ public class Cat_Movement : MonoBehaviour
         }
     }
 
-    void OnDrawGizmos()
+    private void OnDrawGizmos()
     {
-        if (isClimbing == false)
+        if (!isClimbing)
         {
             // Wall Check
-
             Gizmos.color = isHittingWall ? Color.green : Color.red;
-
-            Gizmos.DrawRay(transform.position, new Vector3(transform.forward.x, 0, transform.forward.z) * climbRayDis);
+            Gizmos.DrawRay(
+                transform.position,
+                new Vector3(transform.forward.x, 0f, transform.forward.z).normalized * climbRayDis
+            );
 
             // Normal Ground Check
-
             Gizmos.color = isOnGround ? Color.green : Color.red;
-
             Gizmos.DrawRay(transform.position, -Vector3.up * groundCheckRayDis);
         }
         else
         {
             // Grounded on Wall Check
-
-            Gizmos.color = isOnGround ? Color.green : Color.red;
-
+            Gizmos.color = isGroundedOnWall ? Color.green : Color.red;
             Gizmos.DrawRay(transform.position, -transform.up * groundCheckRayDis);
+
+            // Bottom Ground Check
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawRay(transform.position, -Vector3.up * climbGroundCheckRayDis);
         }
     }
 
@@ -221,36 +245,39 @@ public class Cat_Movement : MonoBehaviour
         climbRotationLock = false;
     }
 
->>>>>>> Stashed changes
-
-
     public void Jump()
     {
-<<<<<<< Updated upstream
-        rb.AddForce(Vector3.up * jumpForce);
-=======
-        if (gatocidad.GetGatocidad() > gatocidadJump)
+        if (isOnGround && !isClimbing)
         {
-            gatocidad.UseGatocidad(gatocidadJump);
-            if (isOnGround && isClimbing == false)
-            {
-                rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpVelocity, rb.linearVelocity.z);
-            }
-            else if (isClimbing == true)
-            {
-
-                Vector3 transformUp = transform.up;
-
-                StartCoroutine(StopCheckingIfCanClimb());
-                StopClimbing();
-                rb.linearVelocity = new Vector3(transformUp.x * climbJumpVelHor, jumpVelocity, transformUp.z * climbJumpVelHor);
-
-            }
+            rb.linearVelocity = new Vector3(
+                rb.linearVelocity.x,
+                jumpVelocity,
+                rb.linearVelocity.z
+            );
         }
->>>>>>> Stashed changes
+        else if (isClimbing)
+        {
+            Vector3 transformUp = transform.up;
+
+            StartCoroutine(StopCheckingIfCanClimb());
+
+            rb.linearVelocity = new Vector3(
+                transformUp.x * climbJumpVelHor,
+                jumpVelocity,
+                transformUp.z * climbJumpVelHor
+            );
+        }
     }
 
+    private IEnumerator StopCheckingIfCanClimb()
+    {
+        canCheckToClimb = false;
+        StopClimbing();
 
+        yield return new WaitForSeconds(0.25f);
+
+        canCheckToClimb = true;
+    }
 
     public void Stun(float stunDuration)
     {
