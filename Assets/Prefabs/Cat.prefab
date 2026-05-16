@@ -488,10 +488,11 @@ MonoBehaviour:
   - -50
   - 50
   groundCheckRayDis: 1
-  climbMoveSpeedVer: 100
-  climbMoveSpeedHor: 30
+  climbMoveSpeedVer: 160
+  climbMoveSpeedHor: 80
   climbRayDis: 1.5
-  limitator: 3
+  limitator: 10
+  climbJumpVelHor: 10
   stateStunned: 0
   direction2D: {x: 0, y: 0, z: 0}
 --- !u!114 &7263173413534681054

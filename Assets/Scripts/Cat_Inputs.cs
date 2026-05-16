@@ -24,6 +24,7 @@ public class Cat_Inputs : MonoBehaviour
 
     private void OnJumpClimb()
     {
-        catMovementScr.Jump();
+        if(catMovementScr != null)
+        { catMovementScr.Jump(); }
     }
 }
