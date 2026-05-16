@@ -1374,6 +1374,7 @@ GameObject:
   - component: {fileID: 2599392983302269607}
   - component: {fileID: 5972608912361136284}
   - component: {fileID: 7498148152224121712}
+  - component: {fileID: 5168643614223026268}
   m_Layer: 0
   m_Name: Cat
   m_TagString: Untagged
@@ -1519,6 +1520,70 @@ MonoBehaviour:
   m_DefaultActionMap: CatMap
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &5168643614223026268
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7690910543258277792}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2d8418b0b9634b1892b0268dd9c2743, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Animation.Rigging::UnityEngine.Animations.Rigging.BoneRenderer
+  boneShape: 1
+  drawBones: 1
+  drawTripods: 0
+  boneSize: 1
+  tripodSize: 1
+  boneColor: {r: 0, g: 0, b: 1, a: 0.5}
+  m_Transforms:
+  - {fileID: 2226670221244776938}
+  - {fileID: 1427466092183501615}
+  - {fileID: 1165593756228324913}
+  - {fileID: 5461463994292848598}
+  - {fileID: 5382891158210574218}
+  - {fileID: 5843921166352313816}
+  - {fileID: 5252755690233205649}
+  - {fileID: 4565167429370374263}
+  - {fileID: 7922319373487270119}
+  - {fileID: 8533996058408138313}
+  - {fileID: 5386145370599631821}
+  - {fileID: 4253932832402292528}
+  - {fileID: 424193942950476183}
+  - {fileID: 2069657254187337615}
+  - {fileID: 6108129108507689959}
+  - {fileID: 7164567990080586513}
+  - {fileID: 937875153738805505}
+  - {fileID: 7335852240681686847}
+  - {fileID: 6718850680285446063}
+  - {fileID: 2026369841268325321}
+  - {fileID: 665006942723482647}
+  - {fileID: 4758830351861077431}
+  - {fileID: 435901554169246780}
+  - {fileID: 7642931892331889381}
+  - {fileID: 933263867539095707}
+  - {fileID: 7450348065849492664}
+  - {fileID: 4294901889889915596}
+  - {fileID: 8420188591034246156}
+  - {fileID: 4156150395864484670}
+  - {fileID: 4640706186255935865}
+  - {fileID: 7598123722015239410}
+  - {fileID: 9043185487569412712}
+  - {fileID: 4086805760417823987}
+  - {fileID: 8183849568432585719}
+  - {fileID: 2927828456316079447}
+  - {fileID: 5657978232651250443}
+  - {fileID: 5140907078154344956}
+  - {fileID: 6832432494126198456}
+  - {fileID: 8243907813582094625}
+  - {fileID: 6102074228108199507}
+  - {fileID: 1623619714100824859}
+  - {fileID: 7629280560770743755}
+  - {fileID: 4725324730975056402}
+  - {fileID: 6135491639259220336}
+  - {fileID: 4671741655938580718}
 --- !u!1 &8082357847914740536
 GameObject:
   m_ObjectHideFlags: 0
