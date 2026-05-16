@@ -18,9 +18,9 @@ public class Cat_Movement : MonoBehaviour
 
     [Header("Climbing")]
     [SerializeField] private float climbMoveSpeedVer;
-    [SerializeField] private float climbMoveSpeedHor, climbRayDis, limitator, climbJumpVelHor;
+    [SerializeField] private float climbMoveSpeedHor, climbRayDis, limitator, climbJumpVelHor, climbGroundCheckRayDis;
 
-    private bool isHittingWall, isClimbing, canCheckToClimb;
+    private bool isHittingWall, isClimbing, canCheckToClimb, isGroundedOnWall;
 
 
 
@@ -117,7 +117,7 @@ public class Cat_Movement : MonoBehaviour
         {
             Ray rayGroundedOnWall = new Ray(transform.position, -transform.up);
 
-            bool isGroundedOnWall = Physics.Raycast(rayGroundedOnWall, out RaycastHit hit, groundCheckRayDis, wallMask);
+            isGroundedOnWall = Physics.Raycast(rayGroundedOnWall, out RaycastHit hit, groundCheckRayDis, wallMask);
 
             // No detecta más pared bajo sus pies
             if (isGroundedOnWall == false)
@@ -126,10 +126,10 @@ public class Cat_Movement : MonoBehaviour
 
 
             // Si llega al suelo arrastrandose por la pared
-            bool hitsBottom = Physics.Raycast(ray, out RaycastHit hitBottom, groundCheckRayDis, wallMask);
+            bool hitsBottom = Physics.Raycast(ray, out RaycastHit hitBottom, climbGroundCheckRayDis, wallMask);
             if (hitsBottom)
             {
-                StopClimbing();
+                StartCoroutine(StopCheckingIfCanClimb());
             }
 
         }
@@ -203,9 +203,9 @@ public class Cat_Movement : MonoBehaviour
         {
             // Grounded on Wall Check
 
-            Gizmos.color = isOnGround ? Color.green : Color.red;
+            Gizmos.color = isGroundedOnWall ? Color.green : Color.red;
 
-            Gizmos.DrawRay(transform.position, -transform.up * groundCheckRayDis);
+            Gizmos.DrawRay(transform.position, -Vector3.up * climbGroundCheckRayDis);
         }
     }
 
@@ -229,7 +229,6 @@ public class Cat_Movement : MonoBehaviour
             Vector3 transformUp = transform.up;
 
             StartCoroutine(StopCheckingIfCanClimb());
-            StopClimbing();
             rb.linearVelocity = new Vector3(transformUp.x * climbJumpVelHor, jumpVelocity, transformUp.z * climbJumpVelHor);
 
         }
@@ -238,6 +237,7 @@ public class Cat_Movement : MonoBehaviour
     private IEnumerator StopCheckingIfCanClimb()
     {
         canCheckToClimb = false;
+        StopClimbing();
         yield return new WaitForSeconds(0.25f);
         canCheckToClimb = true;
 
