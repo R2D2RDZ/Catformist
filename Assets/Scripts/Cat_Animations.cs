@@ -34,6 +34,10 @@ public class Cat_Animations : MonoBehaviour
                 }
 
             }
+            else
+            {
+                animator.SetInteger("State", 3);
+            }
         }
     }
 }
