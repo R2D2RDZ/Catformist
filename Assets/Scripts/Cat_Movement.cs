@@ -86,7 +86,7 @@ public class Cat_Movement : MonoBehaviour
 
         Quaternion tiltRotation = Quaternion.Euler(xAngle, 0f, 0f);
 
-        // Combina la rotaciÛn hacia la direcciÛn con la inclinaciÛn en X
+        // Combina la rotaci√≥n hacia la direcci√≥n con la inclinaci√≥n en X
         targetRotation = targetRotation * tiltRotation;
 
         rb.rotation = Quaternion.Slerp(rb.rotation, targetRotation, rotationSpeed);
@@ -113,7 +113,7 @@ public class Cat_Movement : MonoBehaviour
 
             if (isOnGround)
             {
-                // puede escalar si est· en el cielo
+                // puede escalar si est√° en el cielo
             }
         }
 
@@ -148,7 +148,7 @@ public class Cat_Movement : MonoBehaviour
             {
                 Vector3 forwardOnWall = Vector3.ProjectOnPlane(Vector3.up, wallNormal).normalized;
 
-                // RotaciÛn final:
+                // Rotaci√≥n final:
                 // forward = hacia arriba en la pared
                 // up = normal de la pared
                 Quaternion targetRotation = Quaternion.LookRotation(forwardOnWall, wallNormal);
