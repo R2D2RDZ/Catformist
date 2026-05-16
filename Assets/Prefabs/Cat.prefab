@@ -258,6 +258,7 @@ Transform:
   - {fileID: 5227433816113477855}
   - {fileID: 2056277523941836605}
   - {fileID: 99049998404449448}
+  - {fileID: 766388088199903239}
   m_Father: {fileID: 2226670221244776938}
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!33 &9084276670356165841
@@ -488,10 +489,11 @@ MonoBehaviour:
   - -50
   - 50
   groundCheckRayDis: 1
-  climbMoveSpeedVer: 100
-  climbMoveSpeedHor: 30
+  climbMoveSpeedVer: 160
+  climbMoveSpeedHor: 80
   climbRayDis: 1.5
-  limitator: 3
+  limitator: 10
+  climbJumpVelHor: 50
   stateStunned: 0
   direction2D: {x: 0, y: 0, z: 0}
 --- !u!114 &7263173413534681054

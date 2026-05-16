@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Windows;
@@ -16,8 +17,10 @@ public class Cat_Movement : MonoBehaviour
     private bool isOnGround;
 
     [Header("Climbing")]
-    [SerializeField] private float climbMoveSpeedVer, climbMoveSpeedHor, climbRayDis, limitator;
-    private bool isHittingWall, isClimbing;
+    [SerializeField] private float climbMoveSpeedVer;
+    [SerializeField] private float climbMoveSpeedHor, climbRayDis, limitator, climbJumpVelHor;
+
+    private bool isHittingWall, isClimbing, canCheckToClimb;
 
 
 
@@ -35,6 +38,7 @@ public class Cat_Movement : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        canCheckToClimb = true;
     }
 
     void FixedUpdate()
@@ -49,18 +53,18 @@ public class Cat_Movement : MonoBehaviour
 
         if (isClimbing == false)
         {
-            BH_Move();
-            BH_Rotate();
-            BH_Gravity();
+            Upt_Move();
+            Upt_Rotate();
+            Upt_Gravity();
         }
         else
-        { BH_ClimbMove(); }
-        BH_GroundCheck();
-        BH_CheckIfCanClimb();
+        { Upt_ClimbMove(); }
+        Upt_GroundCheck();
+        Upt_CheckIfCanClimb();
     }
 
 
-    private void BH_Move()
+    private void Upt_Move()
     {
         rb.AddForce(direction3D * moveSpeed);
 
@@ -68,7 +72,7 @@ public class Cat_Movement : MonoBehaviour
         rb.linearVelocity = new Vector3((velocity.x / frictionDivisor), velocity.y, (velocity.z / frictionDivisor));
     }
 
-    private void BH_Rotate()
+    private void Upt_Rotate()
     {
         Quaternion targetRotation = Quaternion.LookRotation(setDirection3D.normalized);
 
@@ -86,18 +90,18 @@ public class Cat_Movement : MonoBehaviour
 
         Quaternion tiltRotation = Quaternion.Euler(xAngle, 0f, 0f);
 
-        // Combina la rotaci贸n hacia la direcci贸n con la inclinaci贸n en X
+        // Combina la rotaci髇 hacia la direcci髇 con la inclinaci髇 en X
         targetRotation = targetRotation * tiltRotation;
 
         rb.rotation = Quaternion.Slerp(rb.rotation, targetRotation, rotationSpeed);
     }
 
-    private void BH_Gravity()
+    private void Upt_Gravity()
     {
         rb.AddForce(Vector3.down * gravityForce);
     }
 
-    private void BH_GroundCheck()
+    private void Upt_GroundCheck()
     {
         Ray ray = new Ray(transform.position, -Vector3.up);
 
@@ -107,30 +111,39 @@ public class Cat_Movement : MonoBehaviour
 
         if (isClimbing == false)
         {
-
-
             isOnGround = Physics.Raycast(ray, out RaycastHit hit, groundCheckRayDis, wallMask);
+        }
+        else
+        {
+            Ray rayGroundedOnWall = new Ray(transform.position, -transform.up);
 
-            if (isOnGround)
-            {
-                // puede escalar si est谩 en el cielo
-            }
+            bool isGroundedOnWall = Physics.Raycast(rayGroundedOnWall, out RaycastHit hit, groundCheckRayDis, wallMask);
+
+            // No detecta m醩 pared bajo sus pies
+            if (isGroundedOnWall == false)
+            { StopClimbing(); }
+
         }
 
     }
 
-    private void BH_ClimbMove()
+    private void Upt_ClimbMove()
     {
         Vector3 wallRight = transform.right;
         Vector3 wallUp = transform.forward;
 
-        rb.AddForce((direction2D.y * transform.forward * climbMoveSpeedVer) + (direction2D.x * transform.right * climbMoveSpeedHor));
+        Vector3 climbUpVector = transform.forward * climbMoveSpeedVer;
+        if (direction3D.magnitude < 0.1f || direction3D.z < 0)
+        {
+            climbUpVector = -transform.forward * climbMoveSpeedVer;
+        }
+        rb.AddForce((climbUpVector) + (direction2D.x * transform.right * climbMoveSpeedHor));
         rb.AddForce(-rb.linearVelocity * limitator);
         rb.AddForce(-transform.up * gravityForce);
 
     }
 
-    private void BH_CheckIfCanClimb()
+    private void Upt_CheckIfCanClimb()
     {
         Ray ray = new Ray(transform.position, new Vector3(transform.forward.x, 0, transform.forward.z));
 
@@ -140,7 +153,7 @@ public class Cat_Movement : MonoBehaviour
 
         isHittingWall = Physics.Raycast(ray, out RaycastHit hit, climbRayDis, wallMask);
 
-        if (isHittingWall && !isOnGround)
+        if (isHittingWall && !isOnGround && canCheckToClimb)
         {
             wallNormal = hit.normal;
 
@@ -148,7 +161,7 @@ public class Cat_Movement : MonoBehaviour
             {
                 Vector3 forwardOnWall = Vector3.ProjectOnPlane(Vector3.up, wallNormal).normalized;
 
-                // Rotaci贸n final:
+                // Rotaci髇 final:
                 // forward = hacia arriba en la pared
                 // up = normal de la pared
                 Quaternion targetRotation = Quaternion.LookRotation(forwardOnWall, wallNormal);
@@ -163,26 +176,63 @@ public class Cat_Movement : MonoBehaviour
 
     void OnDrawGizmos()
     {
-        Gizmos.color = isHittingWall ? Color.green : Color.red;
+        if (isClimbing == false)
+        {
+            // Wall Check
 
-        Gizmos.DrawRay(transform.position, new Vector3(transform.forward.x, 0, transform.forward.z) * climbRayDis);
+            Gizmos.color = isHittingWall ? Color.green : Color.red;
 
-        Gizmos.color = isOnGround ? Color.green : Color.red;
+            Gizmos.DrawRay(transform.position, new Vector3(transform.forward.x, 0, transform.forward.z) * climbRayDis);
 
-        Gizmos.DrawRay(transform.position, -Vector3.up * groundCheckRayDis);
+            // Normal Ground Check
+
+            Gizmos.color = isOnGround ? Color.green : Color.red;
+
+            Gizmos.DrawRay(transform.position, -Vector3.up * groundCheckRayDis);
+        }
+        else
+        {
+            // Grounded on Wall Check
+
+            Gizmos.color = isOnGround ? Color.green : Color.red;
+
+            Gizmos.DrawRay(transform.position, -transform.up * groundCheckRayDis);
+        }
+    }
+
+    private void StopClimbing()
+    {
+        isClimbing = false;
+        climbRotationLock = false;
     }
 
 
 
     public void Jump()
     {
-        if (isOnGround)
+        if (isOnGround && isClimbing == false)
         {
             rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpVelocity, rb.linearVelocity.z);
         }
+        else if (isClimbing == true)
+        {
+
+            Vector3 transformUp = transform.up;
+
+            StartCoroutine(StopCheckingIfCanClimb());
+            StopClimbing();
+            rb.linearVelocity = new Vector3(transformUp.x * climbJumpVelHor, jumpVelocity, transformUp.z * climbJumpVelHor);
+
+        }
     }
 
+    private IEnumerator StopCheckingIfCanClimb()
+    {
+        canCheckToClimb = false;
+        yield return new WaitForSeconds(0.25f);
+        canCheckToClimb = true;
 
+    }
 
     public void Stun(float stunDuration)
     {
