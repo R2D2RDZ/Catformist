@@ -20,7 +20,8 @@ public class Cat_Movement : MonoBehaviour
     [SerializeField] private float climbMoveSpeedVer;
     [SerializeField] private float climbMoveSpeedHor, climbRayDis, limitator, climbJumpVelHor, climbGroundCheckRayDis;
 
-    private bool isHittingWall, isClimbing, canCheckToClimb, isGroundedOnWall;
+    private bool isHittingWall, canCheckToClimb, isGroundedOnWall;
+    [HideInInspector] public bool isClimbing; // Se usa en Cat_Animations.cs
 
 
 
