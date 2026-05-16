@@ -1,55 +1,60 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.Windows;
 
 public class Cat_Movement : MonoBehaviour
 {
-
-    [Header("Movement")]
-    [SerializeField] private float moveSpeed;
-    [SerializeField] private float rotationSpeed, frictionDivisor, jumpVelocity, gravityForce;
+    [SerializeField] private float moveSpeed, rotationSpeed, frictionDivisor, jumpForce, gravityForce;
     [SerializeField] private float jumpVelocityToRotateX;
     [SerializeField] private float[] jumpRotationAngles;
+<<<<<<< Updated upstream
+=======
     [SerializeField] private float groundCheckRayDis;
     private bool isOnGround;
 
     [Header("Climbing")]
     [SerializeField] private float climbMoveSpeedVer;
-    [SerializeField] private float climbMoveSpeedHor, climbRayDis, limitator, climbJumpVelHor, climbGroundCheckRayDis;
+    [SerializeField] private float climbMoveSpeedHor, climbRayDis, limitator, climbJumpVelHor;
 
-    private bool isHittingWall, canCheckToClimb, isGroundedOnWall;
-    [HideInInspector] public bool isClimbing; // Se usa en Cat_Animations.cs
+    [Header("Gatocidad")]
+    [SerializeField] private float gatocidadInfluence;
+    [SerializeField] private float gatocidadJump;
+    [SerializeField] private float gatocidadClimb;
+    [SerializeField] private float gatocidadSlash;
 
+    private bool isHittingWall, isClimbing, canCheckToClimb;
+
+>>>>>>> Stashed changes
 
 
     [HideInInspector] public bool stateStunned;
 
     private Rigidbody rb;
-    private Vector3 velocity;
 
     [HideInInspector] public Vector3 direction2D;
-    private Vector3 setDirection3D, direction3D;
+    private Vector3 setDirection3D;
 
-    private Vector3 wallNormal;
-    private bool climbRotationLock;
+    private Gatocidad gatocidad;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+<<<<<<< Updated upstream
+=======
+        gatocidad = GetComponent<Gatocidad>();
         canCheckToClimb = true;
+>>>>>>> Stashed changes
     }
 
     void FixedUpdate()
     {
-        direction3D = new Vector3(direction2D.x, 0, direction2D.y);
+        Vector3 direction3D = new Vector3(direction2D.x, 0, direction2D.y);
         if (direction3D.magnitude >= 0.1f)
         {
             setDirection3D = direction3D;
         }
 
+<<<<<<< Updated upstream
+        rb.AddForce(direction3D * moveSpeed);
+=======
         velocity = rb.linearVelocity;
 
         if (isClimbing == false)
@@ -58,8 +63,9 @@ public class Cat_Movement : MonoBehaviour
             Upt_Rotate();
             Upt_Gravity();
         }
-        else
-        { Upt_ClimbMove(); }
+        else if(gatocidad.GetGatocidad() > gatocidadClimb)
+            { Upt_ClimbMove(); }
+        else {StopClimbing(); }
         Upt_GroundCheck();
         Upt_CheckIfCanClimb();
     }
@@ -67,24 +73,23 @@ public class Cat_Movement : MonoBehaviour
 
     private void Upt_Move()
     {
-        rb.AddForce(direction3D * moveSpeed);
+        rb.AddForce(direction3D * moveSpeed * (gatocidad.GetGatocidad()/gatocidadInfluence));
+>>>>>>> Stashed changes
 
-
+        Vector3 velocity = rb.linearVelocity;
         rb.linearVelocity = new Vector3((velocity.x / frictionDivisor), velocity.y, (velocity.z / frictionDivisor));
-    }
 
-    private void Upt_Rotate()
-    {
+
         Quaternion targetRotation = Quaternion.LookRotation(setDirection3D.normalized);
 
 
         float xAngle = 0f;
 
-        if (rb.linearVelocity.y > jumpVelocityToRotateX)
+        if (velocity.y > jumpVelocityToRotateX)
         {
             xAngle = jumpRotationAngles[0];
         }
-        else if (rb.linearVelocity.y < -jumpVelocityToRotateX)
+        else if (velocity.y < -jumpVelocityToRotateX)
         {
             xAngle = jumpRotationAngles[1];
         }
@@ -95,13 +100,12 @@ public class Cat_Movement : MonoBehaviour
         targetRotation = targetRotation * tiltRotation;
 
         rb.rotation = Quaternion.Slerp(rb.rotation, targetRotation, rotationSpeed);
-    }
 
-    private void Upt_Gravity()
-    {
         rb.AddForce(Vector3.down * gravityForce);
     }
 
+<<<<<<< Updated upstream
+=======
     private void Upt_GroundCheck()
     {
         Ray ray = new Ray(transform.position, -Vector3.up);
@@ -118,7 +122,7 @@ public class Cat_Movement : MonoBehaviour
         {
             Ray rayGroundedOnWall = new Ray(transform.position, -transform.up);
 
-            isGroundedOnWall = Physics.Raycast(rayGroundedOnWall, out RaycastHit hit, groundCheckRayDis, wallMask);
+            bool isGroundedOnWall = Physics.Raycast(rayGroundedOnWall, out RaycastHit hit, groundCheckRayDis, wallMask);
 
             // No detecta más pared bajo sus pies
             if (isGroundedOnWall == false)
@@ -127,10 +131,10 @@ public class Cat_Movement : MonoBehaviour
 
 
             // Si llega al suelo arrastrandose por la pared
-            bool hitsBottom = Physics.Raycast(ray, out RaycastHit hitBottom, climbGroundCheckRayDis, wallMask);
+            bool hitsBottom = Physics.Raycast(ray, out RaycastHit hitBottom, groundCheckRayDis, wallMask);
             if (hitsBottom)
             {
-                StartCoroutine(StopCheckingIfCanClimb());
+                StopClimbing();
             }
 
         }
@@ -145,6 +149,7 @@ public class Cat_Movement : MonoBehaviour
         Vector3 climbUpVector = transform.forward * climbMoveSpeedVer;
         if (direction3D.magnitude < 0.1f || direction3D.z < 0)
         {
+            gatocidad.UseGatocidad(gatocidadClimb);
             climbUpVector = -transform.forward * climbMoveSpeedVer;
         }
         rb.AddForce((climbUpVector) + (direction2D.x * transform.right * climbMoveSpeedHor));
@@ -204,9 +209,9 @@ public class Cat_Movement : MonoBehaviour
         {
             // Grounded on Wall Check
 
-            Gizmos.color = isGroundedOnWall ? Color.green : Color.red;
+            Gizmos.color = isOnGround ? Color.green : Color.red;
 
-            Gizmos.DrawRay(transform.position, -Vector3.up * climbGroundCheckRayDis);
+            Gizmos.DrawRay(transform.position, -transform.up * groundCheckRayDis);
         }
     }
 
@@ -216,33 +221,36 @@ public class Cat_Movement : MonoBehaviour
         climbRotationLock = false;
     }
 
+>>>>>>> Stashed changes
 
 
     public void Jump()
     {
-        if (isOnGround && isClimbing == false)
+<<<<<<< Updated upstream
+        rb.AddForce(Vector3.up * jumpForce);
+=======
+        if (gatocidad.GetGatocidad() > gatocidadJump)
         {
-            rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpVelocity, rb.linearVelocity.z);
+            gatocidad.UseGatocidad(gatocidadJump);
+            if (isOnGround && isClimbing == false)
+            {
+                rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpVelocity, rb.linearVelocity.z);
+            }
+            else if (isClimbing == true)
+            {
+
+                Vector3 transformUp = transform.up;
+
+                StartCoroutine(StopCheckingIfCanClimb());
+                StopClimbing();
+                rb.linearVelocity = new Vector3(transformUp.x * climbJumpVelHor, jumpVelocity, transformUp.z * climbJumpVelHor);
+
+            }
         }
-        else if (isClimbing == true)
-        {
-
-            Vector3 transformUp = transform.up;
-
-            StartCoroutine(StopCheckingIfCanClimb());
-            rb.linearVelocity = new Vector3(transformUp.x * climbJumpVelHor, jumpVelocity, transformUp.z * climbJumpVelHor);
-
-        }
+>>>>>>> Stashed changes
     }
 
-    private IEnumerator StopCheckingIfCanClimb()
-    {
-        canCheckToClimb = false;
-        StopClimbing();
-        yield return new WaitForSeconds(0.25f);
-        canCheckToClimb = true;
 
-    }
 
     public void Stun(float stunDuration)
     {
