@@ -64,7 +64,7 @@ public class Cat_Movement : MonoBehaviour
     {
         rb.AddForce(direction3D * moveSpeed);
 
-        
+
         rb.linearVelocity = new Vector3((velocity.x / frictionDivisor), velocity.y, (velocity.z / frictionDivisor));
     }
 
@@ -86,7 +86,7 @@ public class Cat_Movement : MonoBehaviour
 
         Quaternion tiltRotation = Quaternion.Euler(xAngle, 0f, 0f);
 
-        // Combina la rotaciÛn hacia la direcciÛn con la inclinaciÛn en X
+        // Combina la rotaci√≥n hacia la direcci√≥n con la inclinaci√≥n en X
         targetRotation = targetRotation * tiltRotation;
 
         rb.rotation = Quaternion.Slerp(rb.rotation, targetRotation, rotationSpeed);
@@ -107,16 +107,16 @@ public class Cat_Movement : MonoBehaviour
 
         if (isClimbing == false)
         {
-            
+
 
             isOnGround = Physics.Raycast(ray, out RaycastHit hit, groundCheckRayDis, wallMask);
 
             if (isOnGround)
             {
-                // puede escalar si est· en el cielo
+                // puede escalar si est√° en el cielo
             }
         }
-        
+
     }
 
     private void BH_ClimbMove()
@@ -132,7 +132,7 @@ public class Cat_Movement : MonoBehaviour
 
     private void BH_CheckIfCanClimb()
     {
-        Ray ray = new Ray(transform.position, new Vector3(transform.forward.x, 0 , transform.forward.z));
+        Ray ray = new Ray(transform.position, new Vector3(transform.forward.x, 0, transform.forward.z));
 
 
         int wallLayer = LayerMask.NameToLayer("Ground");
@@ -140,7 +140,7 @@ public class Cat_Movement : MonoBehaviour
 
         isHittingWall = Physics.Raycast(ray, out RaycastHit hit, climbRayDis, wallMask);
 
-        if(isHittingWall && !isOnGround)
+        if (isHittingWall && !isOnGround)
         {
             wallNormal = hit.normal;
 
@@ -148,7 +148,7 @@ public class Cat_Movement : MonoBehaviour
             {
                 Vector3 forwardOnWall = Vector3.ProjectOnPlane(Vector3.up, wallNormal).normalized;
 
-                // RotaciÛn final:
+                // Rotaci√≥n final:
                 // forward = hacia arriba en la pared
                 // up = normal de la pared
                 Quaternion targetRotation = Quaternion.LookRotation(forwardOnWall, wallNormal);
@@ -176,7 +176,7 @@ public class Cat_Movement : MonoBehaviour
 
     public void Jump()
     {
-        if(isOnGround)
+        if (isOnGround)
         {
             rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpVelocity, rb.linearVelocity.z);
         }
