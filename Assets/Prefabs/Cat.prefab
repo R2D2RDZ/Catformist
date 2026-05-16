@@ -2440,6 +2440,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2226670221244776938}
   - component: {fileID: 7449667449651218440}
+  - component: {fileID: 8578196017213557804}
   - component: {fileID: 5588210354730358085}
   - component: {fileID: 7263173413534681054}
   - component: {fileID: 2599392983302269607}
@@ -2447,7 +2448,7 @@ GameObject:
   - component: {fileID: 7498148152224121712}
   m_Layer: 0
   m_Name: Cat
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2491,6 +2492,7 @@ MonoBehaviour:
   - -50
   - 50
   groundCheckRayDis: 1
+  isOnGround: 0
   climbMoveSpeedVer: 160
   climbMoveSpeedHor: 80
   climbRayDis: 1.5
@@ -2500,6 +2502,41 @@ MonoBehaviour:
   isClimbing: 0
   stateStunned: 0
   direction2D: {x: 0, y: 0, z: 0}
+--- !u!114 &8578196017213557804
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7690910543258277792}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 086bad636efb316469ea239458322431, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Cat_Players
+  playerID: 0
+  catMeshRenderers:
+  - {fileID: 2486564013388654104}
+  - {fileID: 1169599902285071005}
+  - {fileID: 6627096136646954354}
+  extraEye: {fileID: 4068220696834359324}
+  individualAttributes:
+  - catMaterials:
+    - {fileID: 2100000, guid: ab0fe849624f1a743b4997e76ce4e475, type: 2}
+    - {fileID: 2100000, guid: 4878b2151f926c642be2d2bdd40a6b01, type: 2}
+    - {fileID: 2100000, guid: 720ed424b2022dc448f8dd3d893f1bab, type: 2}
+  - catMaterials:
+    - {fileID: 2100000, guid: 0558dcf89872e524ca54d605b1e81392, type: 2}
+    - {fileID: 2100000, guid: 91ec99fef9f4baf48a973da6e91a699f, type: 2}
+    - {fileID: 2100000, guid: 6fe7ee359dba86c47995efd66c7f4744, type: 2}
+  - catMaterials:
+    - {fileID: 2100000, guid: 27cbd08914afa0847b19f102d9895f3e, type: 2}
+    - {fileID: 2100000, guid: dc982991e1f5b274dba7e7d374f6e8a8, type: 2}
+    - {fileID: 2100000, guid: ead92fa64b464294bbb3f08d7fc7b9d7, type: 2}
+  - catMaterials:
+    - {fileID: 2100000, guid: 57a1045d4e17285429d8f498f8ddc523, type: 2}
+    - {fileID: 2100000, guid: 596bdd3031414654c953f74aabae9a89, type: 2}
+    - {fileID: 2100000, guid: 3ebcfe01428982f4b83ab0f1cf6fbf54, type: 2}
 --- !u!114 &5588210354730358085
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -24,6 +24,15 @@ public class Cat_Animations : MonoBehaviour
             {
                 animator.SetFloat("Speed", horizontalVelocity.magnitude * groundMoveMult);
 
+                if (catMovementScr.isOnGround == false)
+                {
+                    animator.SetInteger("State", rb.linearVelocity.y > 0 ? 1 : 2);
+                }
+                else
+                {
+                    animator.SetInteger("State", 0);
+                }
+
             }
         }
     }

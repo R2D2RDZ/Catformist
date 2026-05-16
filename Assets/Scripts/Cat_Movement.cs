@@ -14,7 +14,7 @@ public class Cat_Movement : MonoBehaviour
     [SerializeField] private float jumpVelocityToRotateX;
     [SerializeField] private float[] jumpRotationAngles;
     [SerializeField] private float groundCheckRayDis;
-    private bool isOnGround;
+    [HideInInspector] public bool isOnGround; // Se usa en Cat_Animations.cs
 
     [Header("Climbing")]
     [SerializeField] private float climbMoveSpeedVer;
