@@ -26,6 +26,13 @@ public class Cat_Movement : MonoBehaviour
     [SerializeField] private float climbJumpVelHor;
     [SerializeField] private float climbGroundCheckRayDis;
 
+    [Header("Gatocidad")]
+    private Gatocidad gatocidad;
+    [SerializeField] private float gatocidadClimb;
+    [SerializeField] private float gatocidadJump;
+    [SerializeField] private float gatocidadSlash;
+    [SerializeField] private float gatocidadInfluence;
+
     private bool isHittingWall;
     private bool canCheckToClimb;
     private bool isGroundedOnWall;
@@ -47,6 +54,7 @@ public class Cat_Movement : MonoBehaviour
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
+        gatocidad = GetComponent<Gatocidad>();
         canCheckToClimb = true;
     }
 
@@ -67,10 +75,11 @@ public class Cat_Movement : MonoBehaviour
             Upt_Rotate();
             Upt_Gravity();
         }
-        else
+        else if (gatocidad.GetGatocidad() >= gatocidadClimb)
         {
             Upt_ClimbMove();
-        }
+        } 
+        else { StopClimbing(); }
 
         Upt_GroundCheck();
         Upt_CheckIfCanClimb();
@@ -78,7 +87,7 @@ public class Cat_Movement : MonoBehaviour
 
     private void Upt_Move()
     {
-        rb.AddForce(direction3D * moveSpeed);
+        rb.AddForce(direction3D * moveSpeed * Mathf.Max(gatocidad.GetGatocidad() / gatocidadInfluence, 0.5f));
 
         rb.linearVelocity = new Vector3(
             velocity.x / frictionDivisor,
@@ -167,6 +176,7 @@ public class Cat_Movement : MonoBehaviour
 
         if (direction3D.magnitude < 0.1f || direction3D.z < 0f)
         {
+            gatocidad.UseGatocidad(gatocidadClimb);
             climbUpVector = -transform.forward * climbMoveSpeedVer;
         }
 
@@ -247,25 +257,29 @@ public class Cat_Movement : MonoBehaviour
 
     public void Jump()
     {
-        if (isOnGround && !isClimbing)
-        {
-            rb.linearVelocity = new Vector3(
-                rb.linearVelocity.x,
-                jumpVelocity,
-                rb.linearVelocity.z
-            );
-        }
-        else if (isClimbing)
-        {
-            Vector3 transformUp = transform.up;
+        if (gatocidad.GetGatocidad() >= gatocidadJump)
+        {    
+            gatocidad.UseGatocidad(gatocidadJump);
+            if (isOnGround && !isClimbing)
+            {
+                rb.linearVelocity = new Vector3(
+                    rb.linearVelocity.x,
+                    jumpVelocity,
+                    rb.linearVelocity.z
+                );
+            }
+            else if (isClimbing)
+            {
+                Vector3 transformUp = transform.up;
 
-            StartCoroutine(StopCheckingIfCanClimb());
+                StartCoroutine(StopCheckingIfCanClimb());
 
-            rb.linearVelocity = new Vector3(
-                transformUp.x * climbJumpVelHor,
-                jumpVelocity,
-                transformUp.z * climbJumpVelHor
-            );
+                rb.linearVelocity = new Vector3(
+                    transformUp.x * climbJumpVelHor,
+                    jumpVelocity,
+                    transformUp.z * climbJumpVelHor
+                );
+            }
         }
     }
 
