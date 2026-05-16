@@ -123,6 +123,15 @@ public class Cat_Movement : MonoBehaviour
             if (isGroundedOnWall == false)
             { StopClimbing(); }
 
+
+
+            // Si llega al suelo arrastrandose por la pared
+            bool hitsBottom = Physics.Raycast(ray, out RaycastHit hitBottom, groundCheckRayDis, wallMask);
+            if (hitsBottom)
+            {
+                StopClimbing();
+            }
+
         }
 
     }
