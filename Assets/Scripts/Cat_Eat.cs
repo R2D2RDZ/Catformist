@@ -17,6 +17,8 @@ public class Cat_Eat : MonoBehaviour
     [HideInInspector] public Food currentGrabbedFood;
     [HideInInspector] public Food targetFood;
 
+    private Food foodWithOutline;
+
     // Guarda el progreso de masticado por cada objeto de comida
     [HideInInspector] public Dictionary<Food, float> foodProgress = new Dictionary<Food, float>();
 
@@ -29,6 +31,16 @@ public class Cat_Eat : MonoBehaviour
     private void Update()
     {
         if (catInputs == null) return;
+
+        Food closestFood = GetClosestFood();
+
+        // Gestión de Outline Pasivo
+        if (closestFood != foodWithOutline)
+        {
+            ToggleOutline(foodWithOutline, false); // Apaga el anterior
+            ToggleOutline(closestFood, true);     // Enciende el nuevo
+            foodWithOutline = closestFood;         // Actualiza la referencia
+        }
 
         // 1. Frame Inicial: Detectamos qué comida tenemos enfrente
         if (catInputs.wasEatPressed)
@@ -197,6 +209,10 @@ public class Cat_Eat : MonoBehaviour
             }
 
             foodProgress.Remove(food);
+
+            ToggleOutline(food, false);
+            if (foodWithOutline == food) foodWithOutline = null;
+
             Destroy(food.gameObject);
             targetFood = null;
         }
@@ -206,5 +222,20 @@ public class Cat_Eat : MonoBehaviour
     {
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(transform.position + transform.forward * eatRange, eatRadius);
+    }
+    private void ToggleOutline(Food food, bool state)
+    {
+        if (food == null) return;
+
+        Outline outline = food.GetComponent<Outline>();
+        if (outline == null)
+        {
+            outline = food.GetComponentInChildren<Outline>();
+        }
+
+        if (outline != null)
+        {
+            outline.enabled = state;
+        }
     }
 }
