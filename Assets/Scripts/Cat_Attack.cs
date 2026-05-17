@@ -38,6 +38,7 @@ public class Cat_Attack : MonoBehaviour
                 if (targetMovement != null)
                 {
                     targetMovement.Stun(stunDuration);
+                    targetMovement.catAnimationsScr.PushedWithSlash(transform.forward);
                 }
                 hitCollider.GetComponent<Cat_Eat>().DropFood();
             }

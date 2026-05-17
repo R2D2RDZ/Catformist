@@ -41,7 +41,8 @@ public class Cat_Movement : MonoBehaviour
 
     [HideInInspector] public bool isClimbing; // Se usa en Cat_Animations.cs
     [HideInInspector] public bool stateStunned;
-    [SerializeField] private Cat_Animations catAnimationsScr;
+    public float slashKnockback;
+    public Cat_Animations catAnimationsScr;
 
     [HideInInspector] public Rigidbody rb;
     private Vector3 velocity;
