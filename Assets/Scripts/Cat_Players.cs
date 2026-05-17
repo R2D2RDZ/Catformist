@@ -15,6 +15,15 @@ public class Cat_Players : MonoBehaviour
     }
     [SerializeField] private IndividualAttributes[] individualAttributes;
 
+    // Library for management scripts
+    public Cat_Movement catMovementScr;
+    public Cat_Inputs catInputsScr;
+    public Cat_Attack catAttackScr;
+    public Cat_Eat catEatScr;
+    public Cat_Animations catAnimationsScr;
+    public Gatocidad gatocidadScr;
+
+
 
 
     void Start()
@@ -27,6 +36,9 @@ public class Cat_Players : MonoBehaviour
             index++;
         }
         extraEye.material = individualAttributes[playerID - 1].catMaterials[1];
+
+
+        UI_Cats.instance.JoinGame(this);
     }
 
     void FixedUpdate()

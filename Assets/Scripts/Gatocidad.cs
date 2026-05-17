@@ -2,8 +2,8 @@
 
 public class Gatocidad : MonoBehaviour
 {
-    [SerializeField] float gatocidad = 100f;
-    [SerializeField] float maxGatocidad = 100f;
+    [SerializeField] public float gatocidad = 100f;
+    [SerializeField] public float maxGatocidad = 100f;
     [SerializeField] float restoringSpeed = 1f;
 
     /// <summary>
