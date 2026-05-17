@@ -17,7 +17,7 @@ public class Cat_Eat : MonoBehaviour
     private Food currentGrabbedFood;
     private Food targetFood;
 
-    // Save eating progress per food object
+    // Guarda el progreso de masticado por cada objeto de comida
     private Dictionary<Food, float> foodProgress = new Dictionary<Food, float>();
 
     private void Start()
@@ -30,42 +30,68 @@ public class Cat_Eat : MonoBehaviour
     {
         if (catInputs == null) return;
 
-        if (catInputs.WasEatPressedThisFrame())
+        // 1. Frame Inicial: Detectamos qué comida tenemos enfrente
+        if (catInputs.wasEatPressed)
         {
             holdTime = 0f;
             targetFood = GetClosestFood();
         }
 
-        if (catInputs.IsEatPressed())
+        // 2. Mantener Presionado: Lógica de comer
+        if (catInputs.isEatPressed)
         {
             holdTime += Time.deltaTime;
 
             if (holdTime > LongPressThreshold)
             {
-                // Long press - Try to eat
+                // REGLA: Solo se puede comer si está en el suelo (no la tenemos agarrada)
+                Debug.Log("Agarrando");
                 if (targetFood != null && currentGrabbedFood == null)
                 {
-                    EatFood(targetFood);
+                    // Validación de seguridad: Verificar si la comida sigue dentro del rango actual del gato
+                    Vector3 checkCenter = transform.position + transform.forward * eatRange;
+                    float distance = Vector3.Distance(checkCenter, targetFood.transform.position);
+
+                    if (distance <= eatRadius)
+                    {
+                        EatFood(targetFood);
+                    }
+                    else
+                    {
+                        Debug.Log("Te alejaste demasiado de la comida, acción cancelada.");
+                        targetFood = null;
+                    }
                 }
             }
         }
 
-        if (catInputs.WasEatReleasedThisFrame())
+        // 3. Soltar el Botón: Lógica de Agarrar/Soltar
+        if (catInputs.wasEatReleased)
         {
             if (holdTime <= LongPressThreshold)
             {
-                // Short press - Try to grab or drop
+                // Click corto: Agarrar o Soltar
                 if (currentGrabbedFood != null)
                 {
+                    Debug.Log("Soltando");
                     DropFood();
                 }
                 else if (targetFood != null)
                 {
+                    Debug.Log("Agarrando");
                     GrabFood(targetFood);
                 }
             }
+            else
+            {
+                // Si soltó un Long Press y no terminó de comer, mostramos el progreso guardado
+                if (targetFood != null && foodProgress.ContainsKey(targetFood))
+                {
+                    Debug.Log($"Dejaste de comer. Progreso: {foodProgress[targetFood]:F1}s / {targetFood.timeToEat}s");
+                }
+            }
 
-            // Reset
+            // Resetear el objetivo al soltar el botón
             targetFood = null;
             holdTime = 0f;
         }
@@ -82,7 +108,9 @@ public class Cat_Eat : MonoBehaviour
         {
             if (hit.CompareTag("Food"))
             {
+                Debug.Log("Encontré comida");
                 Food foodComponent = hit.GetComponent<Food>();
+                // Ignoramos la comida que ya llevamos en la boca/garras
                 if (foodComponent != null && foodComponent != currentGrabbedFood)
                 {
                     float dist = Vector3.Distance(checkCenter, hit.transform.position);
@@ -101,37 +129,47 @@ public class Cat_Eat : MonoBehaviour
     private void GrabFood(Food food)
     {
         currentGrabbedFood = food;
+        Debug.Log($"Agarraste: {food.gameObject.name}");
 
-        // Parent to grab point
         if (grabPoint != null)
         {
             currentGrabbedFood.transform.SetParent(grabPoint);
             currentGrabbedFood.transform.localPosition = Vector3.zero;
+            currentGrabbedFood.transform.localRotation = Quaternion.identity;
         }
         else
         {
             currentGrabbedFood.transform.SetParent(transform);
         }
 
-        // Disable physics while holding
         Rigidbody rb = currentGrabbedFood.GetComponent<Rigidbody>();
         if (rb != null)
         {
             rb.isKinematic = true;
         }
+        Collider collider = currentGrabbedFood.GetComponent<Collider>();
+        if (collider != null)
+        {
+            collider.enabled = false;
+        }
     }
 
-    private void DropFood()
+    public void DropFood()
     {
         if (currentGrabbedFood == null) return;
+        Debug.Log($"Soltaste: {currentGrabbedFood.gameObject.name}");
 
         currentGrabbedFood.transform.SetParent(null);
 
-        // Re-enable physics
         Rigidbody rb = currentGrabbedFood.GetComponent<Rigidbody>();
         if (rb != null)
         {
             rb.isKinematic = false;
+        }
+        Collider collider = currentGrabbedFood.GetComponent<Collider>();
+        if (collider != null)
+        {
+            collider.enabled = true;
         }
 
         currentGrabbedFood = null;
@@ -146,16 +184,18 @@ public class Cat_Eat : MonoBehaviour
 
         foodProgress[food] += Time.deltaTime;
 
+        // Feedback en consola para saber que está funcionando
+        Debug.Log($"Comiendo... {foodProgress[food]:F1}s / {food.timeToEat}s");
+
         if (foodProgress[food] >= food.timeToEat)
         {
-            // Finish eating
             if (gatocidad != null)
             {
                 gatocidad.IncreaseMaxGatocidad(food.maxGatocidadIncrease);
                 gatocidad.RestoreGatocidad(food.gatocidadRestore);
+                Debug.Log($"¡Ñam! Comida devorada. Max Gatocidad +{food.maxGatocidadIncrease}, Gatocidad restaurada +{food.gatocidadRestore}");
             }
 
-            // Clean up
             foodProgress.Remove(food);
             Destroy(food.gameObject);
             targetFood = null;

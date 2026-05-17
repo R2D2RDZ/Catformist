@@ -14,10 +14,10 @@ public class visionScript : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            Debug.Log("Player has entered the trigger!");
             perro.patrol.enabled = false;
             perro.chase.enabled = true;
             perro.chase.target = other.transform;
+            perro.rbFollow.moveSpeed = perro.chaseSpeed;
         }
     }
 }

@@ -37,6 +37,7 @@ public class Cat_Attack : MonoBehaviour
                 {
                     targetMovement.Stun(stunDuration);
                 }
+                hitCollider.GetComponent<Cat_Eat>().DropFood();
             }
         }
     }
