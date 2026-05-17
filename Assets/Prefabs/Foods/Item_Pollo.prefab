@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2363965643670860668}
   - component: {fileID: -2527936642492215189}
   - component: {fileID: -4851050040969885967}
+  - component: {fileID: 3440938070090346695}
   m_Layer: 0
   m_Name: Item_Pollo
   m_TagString: Food
@@ -49,8 +50,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Food
   timeToEat: 3
-  gatocidadRestore: 20
-  maxGatocidadIncrease: 5
+  gatocidadRestore: 40
+  maxGatocidadIncrease: 15
 --- !u!65 &-2527936642492215189
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -70,8 +71,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 0.6, y: 0.57, z: 1.2}
+  m_Center: {x: 0.21, y: 0.25, z: 0}
 --- !u!54 &-4851050040969885967
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -99,6 +100,24 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &3440938070090346695
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2475772214247250358}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Outline
+  outlineMode: 0
+  outlineColor: {r: 0.55835617, g: 1, b: 0.3820755, a: 1}
+  outlineWidth: 10
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1 &6497272094357558065
 GameObject:
   m_ObjectHideFlags: 0
