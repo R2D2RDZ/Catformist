@@ -11,9 +11,11 @@ public class smallDogScript : MonoBehaviour
     private AIDestinationSetter chase;
     private Patrol patrol;
     private RigidbodyFollower rbFollow;
+    private FollowerEntity entity;
     public Transform safeSpace;
 
     public bool ignoreCat=false;
+    private GameObject grabbedFood;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -22,12 +24,19 @@ public class smallDogScript : MonoBehaviour
         chase = parent.GetComponent<AIDestinationSetter>();
         patrol = parent.GetComponent<Patrol>();
         rbFollow = parent.GetComponent<RigidbodyFollower>();
+        entity = parent.GetComponent<FollowerEntity>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if(chase.isActiveAndEnabled == true)
+        {
+            if (entity.reachedEndOfPath)
+            {
+                Destroy(grabbedFood);
+            }
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -44,6 +53,7 @@ public class smallDogScript : MonoBehaviour
     private void GrabFood(Food food)
     {
         currentGrabbedFood = food;
+        grabbedFood = food.gameObject;
         Debug.Log($"Agarraste: {food.gameObject.name}");
 
         if (grabPoint != null)
