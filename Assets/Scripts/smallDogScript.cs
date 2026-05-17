@@ -32,7 +32,7 @@ public class smallDogScript : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Food")&&(chase == true))
+        if (other.CompareTag("Food")&&(chase.isActiveAndEnabled == true))
         {
             GrabFood(other.gameObject.GetComponent<Food>());
             chase.target = safeSpace;
