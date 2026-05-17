@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem; // Requerido para detectar el Enter de forma nativa
@@ -19,7 +20,16 @@ public class RoundSystem : MonoBehaviour
     [SerializeField] private Transform[] enemySpawnPoints;
     [SerializeField] private int enemyCountPerRound = 3;
 
-    private int currentRound = 0;
+    [Header("Match Settings")]
+    private const int TOTAL_ROUNDS = 7;
+    private const float ROUND_DURATION = 60f; // 1 minuto
+    private const float BREAK_DURATION = 5f;  // 5 segundos
+
+    [HideInInspector] public int currentRound = 0;
+    [HideInInspector] public float timeRemaining = 0f;
+    [HideInInspector] public bool isRoundActive = false;
+    [HideInInspector] public bool isBreakActive = false;
+
     private bool gameStarted = false;
 
     // Listas internas para rastrear y limpiar los objetos clonados en cada ronda
@@ -72,17 +82,69 @@ public class RoundSystem : MonoBehaviour
         currentRound = 0;
         Debug.Log("¡Partida Iniciada!");
 
-        // Si no asignaste jugadores manualmente en el Inspector, los buscamos por su script de movimiento
-        if (players.Count == 0)
+        StartCoroutine(MatchLoopRoutine());
+    }
+
+    private IEnumerator MatchLoopRoutine()
+    {
+        for (int i = 1; i <= TOTAL_ROUNDS; i++)
         {
-            Cat_Movement[] catMovements = Object.FindObjectsByType<Cat_Movement>();
-            foreach (var cat in catMovements)
+            // --- FASE 1: INICIAR Y CONFIGURAR LA RONDA ---
+            currentRound = i;
+            StartNextRound(); // Limpia el mapa, spawnea comida/enemigos y resetea michis
+
+            isRoundActive = true;
+            isBreakActive = false;
+            timeRemaining = ROUND_DURATION;
+
+            // Cuenta regresiva del minuto de juego
+            while (timeRemaining > 0)
             {
-                players.Add(cat.gameObject);
+                timeRemaining -= Time.deltaTime;
+                // Debug.Log($"Ronda {currentRound} - Tiempo restante: {timeRemaining:F1}s");
+                yield return null; // Espera al siguiente frame
+            }
+
+            isRoundActive = false;
+            Debug.Log($"=== ¡Fin de la Ronda {currentRound}! ===");
+
+            // --- FASE 2: DESCANSO DE 5 SEGUNDOS (Solo si no es la última ronda) ---
+            if (currentRound < TOTAL_ROUNDS)
+            {
+                isBreakActive = true;
+                timeRemaining = BREAK_DURATION;
+
+                // Limpiamos los enemigos y comida inmediatamente al acabar la ronda para el descanso
+                ClearPreviousRoundObjects();
+                Debug.Log($"Iniciando descanso de {BREAK_DURATION} segundos...");
+
+                while (timeRemaining > 0)
+                {
+                    timeRemaining -= Time.deltaTime;
+                    // Debug.Log($"Descanso - Siguiente ronda en: {timeRemaining:F1}s");
+                    yield return null;
+                }
+
+                isBreakActive = false;
             }
         }
 
-        StartNextRound();
+        // --- FASE 3: FIN DEL JUEGO (Al completar las 7 rondas) ---
+        FinishMatch();
+    }
+
+    private void FinishMatch()
+    {
+        gameStarted = false;
+        isRoundActive = false;
+        isBreakActive = false;
+        ClearPreviousRoundObjects();
+
+        Debug.Log("=====================================");
+        Debug.Log("¡PARTIDA FINALIZADA! Completadas las 7 rondas.");
+        Debug.Log("=====================================");
+
+        // Aquí podrías activar una pantalla de puntuaciones, victoria, etc.
     }
 
     public void StartNextRound()
