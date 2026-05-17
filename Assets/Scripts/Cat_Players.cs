@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Cat_Players : MonoBehaviour
 {
@@ -14,6 +15,13 @@ public class Cat_Players : MonoBehaviour
         public Material[] catMaterials; // Body , Eyes, Nose
     }
     [SerializeField] private IndividualAttributes[] individualAttributes;
+
+    [SerializeField] private Animator eatBarAnimator;
+    [SerializeField] private Vector3 eatBarObjOffset;
+    [SerializeField] private GameObject eatBarObj;
+    [SerializeField] private Image eatBarFill;
+    private bool lockAppearEatBar;
+
 
     // Library for management scripts
     public Cat_Movement catMovementScr;
@@ -38,12 +46,40 @@ public class Cat_Players : MonoBehaviour
         }
         extraEye.material = individualAttributes[playerID - 1].catMaterials[1];
 
+        eatBarObj.SetActive(false);
+        eatBarObj.transform.SetParent(GameObject.Find("CanvasUI-NoCambiarNombre").transform);
 
         UI_Cats.instance.JoinGame(this);
     }
 
     void FixedUpdate()
     {
-        
+        if(catEatScr.targetFood != null && catEatScr.foodProgress.ContainsKey(catEatScr.targetFood) &&
+            catEatScr.holdTime > 0.2f && catEatScr.currentGrabbedFood == null)
+        {
+            if(lockAppearEatBar == false)
+            {
+                eatBarObj.SetActive(false);
+                eatBarObj.SetActive(true);
+                catAnimationsScr.animator.SetBool("Eating", true);
+                lockAppearEatBar = true;
+            }
+
+            eatBarFill.fillAmount = catEatScr.foodProgress[catEatScr.targetFood] / catEatScr.targetFood.timeToEat;
+        }
+        else
+        {
+            if (lockAppearEatBar == true)
+            {
+                eatBarAnimator.SetBool("Dissapear", true);
+                catAnimationsScr.animator.SetBool("Eating", false);
+                lockAppearEatBar = false;
+            }
+        }
+        // set eatBarObj position in canvas relative to this transform.position
+        Vector3 screenPos = Camera.main.WorldToScreenPoint(transform.position + eatBarObjOffset);
+        eatBarObj.transform.position = screenPos;
+
+
     }
 }

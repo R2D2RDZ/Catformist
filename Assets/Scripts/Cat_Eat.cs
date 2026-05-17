@@ -11,14 +11,14 @@ public class Cat_Eat : MonoBehaviour
     private Cat_Inputs catInputs;
     private Gatocidad gatocidad;
 
-    private float holdTime = 0f;
+    [HideInInspector] public float holdTime = 0f;
     private const float LongPressThreshold = 0.2f;
 
-    private Food currentGrabbedFood;
-    private Food targetFood;
+    [HideInInspector] public Food currentGrabbedFood;
+    [HideInInspector] public Food targetFood;
 
     // Guarda el progreso de masticado por cada objeto de comida
-    private Dictionary<Food, float> foodProgress = new Dictionary<Food, float>();
+    [HideInInspector] public Dictionary<Food, float> foodProgress = new Dictionary<Food, float>();
 
     private void Start()
     {
