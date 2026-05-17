@@ -35,6 +35,8 @@ public class RoundSystem : MonoBehaviour
     [HideInInspector] public bool isRoundActive = false;
     [HideInInspector] public bool isBreakActive = false;
 
+    [SerializeField] private Transform safeSpaceDog;
+
     private bool gameStarted = false;
 
     // Listas internas para rastrear y limpiar los objetos clonados en cada ronda
@@ -269,6 +271,12 @@ public class RoundSystem : MonoBehaviour
             GameObject newEnemy = Instantiate(prefabToSpawn, spawnPoint.position, spawnPoint.rotation);
             spawnedEnemies.Add(newEnemy);
             newEnemy.GetComponentInChildren<Patrol>().targets = enemySpawnPoints;
+            if (newEnemy.name == "SmallDog(Clone)")
+            {
+                Debug.Log("Chihuahua");
+                newEnemy.GetComponentInChildren<smallDogScript>().safeSpace = safeSpaceDog;
+                //newEnemy.GetComponentInChildren<Transform>().GetComponentInChildren<smallDogScript>().safeSpace = safeSpaceDog;
+            }
 
             availablePoints.RemoveAt(randomPointIndex);
         }
