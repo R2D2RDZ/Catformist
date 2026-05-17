@@ -41,6 +41,7 @@ public class visionSmallDog : MonoBehaviour
 
         foreach (GameObject obj in objectsWithTag)
         {
+            
             // Calculate the difference vector
             Vector3 diff = obj.transform.position - currentPos;
 
@@ -48,13 +49,17 @@ public class visionSmallDog : MonoBehaviour
             diff.y = 0;
 
             // Use sqrMagnitude for faster performance
-            float distanceSqr = diff.sqrMagnitude;
-
-            if (distanceSqr < shortestDistanceSqr)
+            if (obj.GetComponent<Collider>().enabled == true)
             {
-                shortestDistanceSqr = distanceSqr;
-                closest = obj;
+                float distanceSqr = diff.sqrMagnitude;
+                if (distanceSqr < shortestDistanceSqr)
+                {
+                    shortestDistanceSqr = distanceSqr;
+                    closest = obj;
+                }
             }
+
+            
         }
         return closest;
     }
