@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem; // Requerido para detectar el Enter de forma nativa
 using TMPro;
+using Pathfinding;
 
 public class RoundSystem : MonoBehaviour
 {
@@ -267,6 +268,7 @@ public class RoundSystem : MonoBehaviour
 
             GameObject newEnemy = Instantiate(prefabToSpawn, spawnPoint.position, spawnPoint.rotation);
             spawnedEnemies.Add(newEnemy);
+            newEnemy.GetComponentInChildren<Patrol>().targets = enemySpawnPoints;
 
             availablePoints.RemoveAt(randomPointIndex);
         }

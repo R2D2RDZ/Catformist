@@ -134,7 +134,7 @@ public class Cat_Movement : MonoBehaviour
     {
         Ray ray = new Ray(transform.position, -Vector3.up);
 
-        int groundLayer = LayerMask.NameToLayer("Ground");
+        int groundLayer = LayerMask.GetMask("Ground", "Obstacle");
         int groundMask = 1 << groundLayer;
 
         if (!isClimbing)
@@ -204,7 +204,7 @@ public class Cat_Movement : MonoBehaviour
 
         Ray ray = new Ray(transform.position, rayDirection);
 
-        int groundLayer = LayerMask.NameToLayer("Ground");
+        int groundLayer = LayerMask.GetMask("Ground", "Obstacle"); ;
         int groundMask = 1 << groundLayer;
 
         isHittingWall = Physics.Raycast(ray, out RaycastHit hit, climbRayDis, groundMask);
