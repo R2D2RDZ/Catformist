@@ -5,7 +5,7 @@ public class Cat_Lives : MonoBehaviour
 {
     [Header("Life Settings")]
     [SerializeField] private int maxLives = 7;
-    private int currentLives;
+    [HideInInspector] public int currentLives;
 
     [Header("Respawn Points")]
     // Aquí arrastras los mismos spawnpoints que usaste en el RoundSystem
