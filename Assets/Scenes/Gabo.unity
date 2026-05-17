@@ -643,6 +643,7 @@ MonoBehaviour:
   timeRemaining: 0
   isRoundActive: 0
   isBreakActive: 0
+  safeSpaceDog: {fileID: 0}
 --- !u!4 &219390551
 Transform:
   m_ObjectHideFlags: 0
