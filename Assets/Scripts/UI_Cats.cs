@@ -11,7 +11,9 @@ public class UI_Cats : MonoBehaviour
     public struct UIStruct
     {
         public GameObject wholePlayerUI;
-        public Image catocidadFillImage;
+        public Image gatocidadCurrrentFill;
+        public TextMeshProUGUI gatocidadCurrrentTxt;
+        public TextMeshProUGUI gatocidadMaxTxt;
         public TextMeshProUGUI catLives;
 
         [Header("No Tocar")]
@@ -58,8 +60,11 @@ public class UI_Cats : MonoBehaviour
             {
                 if (ui.catPlayersScr != null)
                 {
-                    ui.catocidadFillImage.fillAmount = ui.catPlayersScr.gatocidadScr.gatocidad / ui.catPlayersScr.gatocidadScr.maxGatocidad;
+                    ui.gatocidadCurrrentFill.fillAmount = ui.catPlayersScr.gatocidadScr.gatocidad / ui.catPlayersScr.gatocidadScr.maxGatocidad;
 
+                    ui.gatocidadCurrrentTxt.text = Mathf.RoundToInt(ui.catPlayersScr.gatocidadScr.gatocidad).ToString();
+                    ui.gatocidadMaxTxt.text = Mathf.RoundToInt(ui.catPlayersScr.gatocidadScr.maxGatocidad).ToString();
+                    ui.catLives.text = ui.catPlayersScr.catLivesScr.currentLives.ToString();
                 }
             }
 

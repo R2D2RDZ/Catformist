@@ -5405,6 +5405,7 @@ MonoBehaviour:
   catMovementScr: {fileID: 7449667449651218440}
   catInputsScr: {fileID: 7263173413534681054}
   catAttackScr: {fileID: 3918931639691894132}
+  catLivesScr: {fileID: 8525038684581930922}
   catEatScr: {fileID: 7971027056845290802}
   catAnimationsScr: {fileID: 5588210354730358085}
   gatocidadScr: {fileID: 7871260316984859403}
@@ -5422,7 +5423,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cat_Animations
   animator: {fileID: 2035388960426744341}
   groundMoveMult: 0.4
-  secondsSlashToNormal: 0.2
+  secondsSlashToNormal: 0.1
   mainCollider: {fileID: 2599392983302269607}
   koColliders:
   - {fileID: 2434328004133667986}
@@ -5555,6 +5556,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Cat_Lives
   maxLives: 7
+  currentLives: 0
   spawnPoints: []
 --- !u!136 &2599392983302269607
 CapsuleCollider:
