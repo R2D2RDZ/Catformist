@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68147e9b8c995bc45ae2b4e0b09bd643, type: 3}
+  m_Name: dogBark 4
+  m_EditorClassIdentifier: Assembly-CSharp::SoundData
+  soundName: 
+  clip: {fileID: 8300000, guid: 584f194972edcec4cb2aaeeb5e347642, type: 3}
+  volume: 1
+  pitch: 1
+  useRandomPitch: 0
+  pitchRange: 0.1

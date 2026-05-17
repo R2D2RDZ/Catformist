@@ -198,9 +198,13 @@ public class Cat_Eat : MonoBehaviour
 
         // Feedback en consola para saber que está funcionando
         Debug.Log($"Comiendo... {foodProgress[food]:F1}s / {food.timeToEat}s");
+        string sonidoGato = "meow"+ Random.Range(1,7);
+        
+        Debug.Log("Playing" + sonidoGato);
 
         if (foodProgress[food] >= food.timeToEat)
         {
+            AudioManager.Instance.PlaySFX(sonidoGato);
             if (gatocidad != null)
             {
                 gatocidad.IncreaseMaxGatocidad(food.maxGatocidadIncrease);

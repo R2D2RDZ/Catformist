@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Cat_Attack : MonoBehaviour
@@ -19,6 +20,8 @@ public class Cat_Attack : MonoBehaviour
 
     public void PerformSlash()
     {
+        string sonidoGato = "meow" + Random.Range(8, 15);
+        AudioManager.Instance.PlaySFX(sonidoGato);
         // Try to use Gatocidad before slashing
         if (gatocidad != null && !gatocidad.UseGatocidad(slashCost))
         {

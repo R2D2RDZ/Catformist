@@ -24,6 +24,7 @@ public class AudioManager : MonoBehaviour
             soundDictionary = new Dictionary<string, SoundData>();
             foreach (var sound in soundList)
             {
+                Debug.Log(sound.name);
                 soundDictionary.Add(sound.soundName, sound);
             }
         }
@@ -35,6 +36,8 @@ public class AudioManager : MonoBehaviour
 
     public void PlaySFX(string name)
     {
+        
+        Debug.Log("Sound: " + name);
         if (!soundDictionary.TryGetValue(name, out SoundData sound))
         {
             Debug.LogWarning($"Sonido no encontrado: {name}");
