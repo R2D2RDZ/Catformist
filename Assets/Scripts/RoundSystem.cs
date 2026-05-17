@@ -270,7 +270,7 @@ public class RoundSystem : MonoBehaviour
 
             GameObject newEnemy = Instantiate(prefabToSpawn, spawnPoint.position, spawnPoint.rotation);
             spawnedEnemies.Add(newEnemy);
-            newEnemy.GetComponentInChildren<Patrol>().targets = enemySpawnPoints;
+            newEnemy.GetComponentInChildren<Patrol>().targets = getRandomList(randomPointIndex, enemySpawnPoints);
             if (newEnemy.name == "SmallDog(Clone)")
             {
                 Debug.Log("Chihuahua");
@@ -339,6 +339,27 @@ public class RoundSystem : MonoBehaviour
         {
             Debug.LogWarning($"No se pudo reposicionar a {player.name} porque no está registrado en el RoundSystem.");
         }
+    }
+
+    private Transform[] getRandomList(int spawnpoint, Transform[] spawnpoints)
+    {
+        Transform[] randomPoints = new Transform[7];
+        int i = spawnpoint;
+        for (int j = 0; j < 7; j++)
+        {
+            Debug.Log("El spawn point es " + spawnpoint);
+            Debug.Log(i);
+            randomPoints[j]=spawnpoints[i];
+            if (i == 6)
+            {
+                i = 0;
+            }
+            else
+            {
+                i++;
+            }
+        }
+        return randomPoints;
     }
     
     void UpdateUI()
