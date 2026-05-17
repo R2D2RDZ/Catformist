@@ -5422,7 +5422,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Cat_Animations
   animator: {fileID: 2035388960426744341}
   groundMoveMult: 0.4
-  secondsSlashToNormal: 0.2
+  secondsSlashToNormal: 0.1
   mainCollider: {fileID: 2599392983302269607}
   koColliders:
   - {fileID: 2434328004133667986}
