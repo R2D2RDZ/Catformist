@@ -38,6 +38,34 @@ public class RoundSystem : MonoBehaviour
         // if (gameStarted && Keyboard.current.nKey.wasPressedThisFrame) { StartNextRound(); }
     }
 
+    public void OnPlayerJoined(PlayerInput playerInput)
+    {
+        GameObject newPlayer = playerInput.gameObject;
+
+        if (!players.Contains(newPlayer))
+        {
+            players.Add(newPlayer);
+            Debug.Log($"¡{newPlayer.name} (Jugador {players.Count}) se ha unido a la partida!");
+
+            // Si un jugador se une "tarde" cuando la ronda ya empezó, 
+            // lo teletransportamos de inmediato a su spawn para que no se quede flotando
+            if (gameStarted)
+            {
+                PositionSinglePlayer(players.Count - 1);
+            }
+        }
+    }
+
+    // Opcional: Si un jugador se desconecta, lo removemos de la lista
+    public void OnPlayerLeft(PlayerInput playerInput)
+    {
+        if (players.Contains(playerInput.gameObject))
+        {
+            players.Remove(playerInput.gameObject);
+            Debug.Log($"El jugador {playerInput.gameObject.name} ha abandonado la partida.");
+        }
+    }
+
     private void StartGame()
     {
         gameStarted = true;
@@ -114,7 +142,7 @@ public class RoundSystem : MonoBehaviour
     private void SpawnFood()
     {
         if (foodPrefabs.Length == 0 || foodSpawnPoints.Length == 0) return;
-
+        Debug.Log("Apareciendo comida");
         // Creamos una copia de los spawnpoints para mezclarlos y evitar que aparezcan dos comidas en el mismo sitio
         List<Transform> availablePoints = new List<Transform>(foodSpawnPoints);
 
@@ -174,5 +202,32 @@ public class RoundSystem : MonoBehaviour
             if (enemy != null) Destroy(enemy);
         }
         spawnedEnemies.Clear();
+    }
+    private void PositionSinglePlayer(int index)
+    {
+        if (index >= players.Count || players[index] == null) return;
+        if (index >= playerSpawnPoints.Length || playerSpawnPoints[index] == null) return;
+
+        GameObject player = players[index];
+        Transform spawnPoint = playerSpawnPoints[index];
+
+        // Reset físico para evitar tirones
+        Cat_Movement moveScript = player.GetComponent<Cat_Movement>();
+        if (moveScript != null && moveScript.rb != null)
+        {
+            moveScript.rb.linearVelocity = Vector3.zero;
+            moveScript.rb.angularVelocity = Vector3.zero;
+            moveScript.rb.position = spawnPoint.position;
+        }
+
+        player.transform.position = spawnPoint.position;
+        player.transform.rotation = spawnPoint.rotation;
+
+        // Reset de Gatocidad
+        Gatocidad gatocidadScript = player.GetComponent<Gatocidad>();
+        if (gatocidadScript != null)
+        {
+            gatocidadScript.ResetGatocidad();
+        }
     }
 }
