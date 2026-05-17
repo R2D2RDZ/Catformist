@@ -3,9 +3,9 @@ using UnityEngine.InputSystem;
 
 public class Cat_Inputs : MonoBehaviour
 {
-
-    [Header("Input Settings")]
-    [SerializeField] private InputActionReference eatAction;
+    public bool isEatPressed;
+    public bool wasEatPressed;
+    public bool wasEatReleased;
 
     private PlayerInput playerInput;
 
@@ -47,22 +47,33 @@ public class Cat_Inputs : MonoBehaviour
             catAttackScr.PerformSlash();
         }
     }
-
-    public bool IsEatPressed()
+    void Update()
     {
-        if (catMovementScr != null && catMovementScr.stateStunned) return false;
-        return playerInput.actions["Eat"].IsPressed();
+        // Si el gato está aturdido, aseguramos que todo esté apagado
+        if (catMovementScr != null && catMovementScr.stateStunned)
+        {
+            isEatPressed = false;
+            wasEatPressed = false;
+            wasEatReleased = false;
+            return;
+        }
+
+        // Leemos directamente de la acción en el Update dinámico. 
+        // Esto es 100% inmune a cómo esté configurado el botón en el editor de Unity.
+        var eatAction = playerInput.actions["Eat"];
+        if (eatAction != null)
+        {
+            isEatPressed = eatAction.IsPressed();
+
+            if (eatAction.WasPressedThisFrame()) wasEatPressed = true;
+            if (eatAction.WasReleasedThisFrame()) wasEatReleased = true;
+        }
     }
 
-    public bool WasEatPressedThisFrame()
+    // Se ejecuta al final del frame para apagar los gatillos automáticamente
+    void LateUpdate()
     {
-        if (catMovementScr != null && catMovementScr.stateStunned) return false;
-        return playerInput.actions["Eat"].WasPressedThisFrame();
-    }
-
-    public bool WasEatReleasedThisFrame()
-    {
-        if (catMovementScr != null && catMovementScr.stateStunned) return false;
-        return playerInput.actions["Eat"].WasReleasedThisFrame();
+        wasEatPressed = false;
+        wasEatReleased = false;
     }
 }
