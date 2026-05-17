@@ -41,6 +41,7 @@ public class Cat_Movement : MonoBehaviour
 
     [HideInInspector] public bool isClimbing; // Se usa en Cat_Animations.cs
     [HideInInspector] public bool stateStunned;
+    [SerializeField] private Cat_Animations catAnimationsScr;
 
     [HideInInspector] public Rigidbody rb;
     private Vector3 velocity;
@@ -133,7 +134,7 @@ public class Cat_Movement : MonoBehaviour
     {
         Ray ray = new Ray(transform.position, -Vector3.up);
 
-        int groundLayer = LayerMask.NameToLayer("Ground");
+        int groundLayer = LayerMask.GetMask("Ground", "Obstacle");
         int groundMask = 1 << groundLayer;
 
         if (!isClimbing)
@@ -203,7 +204,7 @@ public class Cat_Movement : MonoBehaviour
 
         Ray ray = new Ray(transform.position, rayDirection);
 
-        int groundLayer = LayerMask.NameToLayer("Ground");
+        int groundLayer = LayerMask.GetMask("Ground", "Obstacle"); ;
         int groundMask = 1 << groundLayer;
 
         isHittingWall = Physics.Raycast(ray, out RaycastHit hit, climbRayDis, groundMask);
@@ -330,9 +331,14 @@ public class Cat_Movement : MonoBehaviour
         }
         direction2D = Vector2.zero;
         direction3D = Vector3.zero;
+
+        catAnimationsScr.KnockOut(true);
         
         yield return new WaitForSeconds(duration);
         
         stateStunned = false;
+
+        catAnimationsScr.KnockOut(false);
+
     }
 }

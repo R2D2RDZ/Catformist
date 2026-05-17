@@ -3442,10 +3442,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: AstarPathfindingProject::Pathfinding.Patrol
   version: 1073741824
-  targets:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  targets: []
   delay: 0
   updateDestinationEveryFrame: 0
 --- !u!114 &1433794402752750491
