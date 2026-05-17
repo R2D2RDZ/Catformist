@@ -15,7 +15,7 @@ public class RoundSystem : MonoBehaviour
     [Header("Food Spawning")]
     [SerializeField] private GameObject[] foodPrefabs;
     [SerializeField] private Transform[] foodSpawnPoints;
-    [SerializeField] private int foodCountPerRound = 5;
+    [SerializeField] private int foodCountPerRound = 10;
 
     [Header("Enemy Spawning")]
     [SerializeField] private GameObject[] enemyPrefabs;
@@ -23,12 +23,14 @@ public class RoundSystem : MonoBehaviour
     [SerializeField] private int enemyCountPerRound = 3;
 
     [Header("Match Settings")]
-    private const int TOTAL_ROUNDS = 7;
-    private const float ROUND_DURATION = 60f; // 1 minuto
-    private const float BREAK_DURATION = 5f;  // 5 segundos
+    [SerializeField] private const int TOTAL_ROUNDS = 7;
+    [SerializeField] private const float ROUND_DURATION = 60f; // 1 minuto
+    [SerializeField] private const float BREAK_DURATION = 5f;  // 5 segundos
 
     [Header("UI")]
-    [SerializeField] private TMP_Text RoundNumber;
+    [SerializeField] private TMP_Text roundNumber;
+    [SerializeField] private TMP_Text timer;
+    [SerializeField] private TMP_Text timerBreak;
 
     [HideInInspector] public int currentRound = 0;
     [HideInInspector] public float timeRemaining = 0f;
@@ -50,6 +52,12 @@ public class RoundSystem : MonoBehaviour
         {
             StartGame();
         }
+        try
+        {
+            spawnedFood.Remove(null);
+        }
+        catch { }
+
 
         // OPCIONAL: Puedes usar otra tecla (ej: Espacio o N) para avanzar de ronda manualmente si lo necesitas para pruebas
         // if (gameStarted && Keyboard.current.nKey.wasPressedThisFrame) { StartNextRound(); }
@@ -125,6 +133,11 @@ public class RoundSystem : MonoBehaviour
             while (timeRemaining > 0)
             {
                 timeRemaining -= Time.deltaTime;
+                timer.text = Mathf.RoundToInt(timeRemaining).ToString();
+                if (spawnedFood.Count == 0)
+                {
+                    timeRemaining = 0;
+                }
                 // Debug.Log($"Ronda {currentRound} - Tiempo restante: {timeRemaining:F1}s");
                 yield return null; // Espera al siguiente frame
             }
@@ -145,6 +158,7 @@ public class RoundSystem : MonoBehaviour
                 while (timeRemaining > 0)
                 {
                     timeRemaining -= Time.deltaTime;
+                    timerBreak.text = Mathf.RoundToInt(timeRemaining).ToString();
                     // Debug.Log($"Descanso - Siguiente ronda en: {timeRemaining:F1}s");
                     yield return null;
                 }
@@ -364,6 +378,6 @@ public class RoundSystem : MonoBehaviour
     
     void UpdateUI()
     {
-        RoundNumber.text = (currentRound-1).ToString();
+        roundNumber.text = (currentRound-1).ToString();
     }
 }
