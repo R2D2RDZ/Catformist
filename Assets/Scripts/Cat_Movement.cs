@@ -138,14 +138,14 @@ public class Cat_Movement : MonoBehaviour
 
         if (!isClimbing)
         {
-            isOnGround = Physics.BoxCast(
-                transform.position,
-                climbBottomBoxSize,
-                Vector3.down,
-                transform.rotation,
-                groundCheckDistance,
-                groundMask
-            );
+            // Calculamos la posición exacta del centro de la caja (igual que el Gizmo)
+            Vector3 center = transform.position - Vector3.up * groundCheckDistance;
+
+            // Convertimos el tamaño del inspector en la mitad (halfExtents) para la física
+            Vector3 halfExtents = new Vector3(groundCheckBoxSize.x / 2f, 0.25f, groundCheckBoxSize.y / 2f);
+
+            // CheckBox no sufre del bug de los bordes/esquinas al estar en contacto continuo
+            isOnGround = Physics.CheckBox(center, halfExtents, transform.rotation, groundMask);
         }
         else
         {
@@ -164,15 +164,11 @@ public class Cat_Movement : MonoBehaviour
                 StopClimbing();
             }
 
-            // Si llega al suelo arrastrándose por la pared
-            bool hitsBottom = Physics.BoxCast(
-                transform.position,
-                climbBottomBoxSize,
-                Vector3.down,
-                transform.rotation,
-                climbBottomDistance,
-                groundMask
-            );
+            // Si llega al suelo arrastrándose por la pared (Usando CheckBox)
+            Vector3 climbCenter = transform.position - Vector3.up * climbBottomDistance;
+            Vector3 climbHalfExtents = new Vector3(climbBottomBoxSize.x / 2f, 0.25f, climbBottomBoxSize.y / 2f);
+
+            bool hitsBottom = Physics.CheckBox(climbCenter, climbHalfExtents, transform.rotation, groundMask);
 
             if (hitsBottom)
             {
@@ -235,60 +231,38 @@ public class Cat_Movement : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        int groundMask = LayerMask.GetMask("Ground");
-
         if (!isClimbing)
         {
-            // 1. WALL CHECK (Detección de pared)
+            // Wall Check
             Gizmos.color = isHittingWall ? Color.green : Color.red;
             Vector3 rayDirection = new Vector3(transform.forward.x, 0f, transform.forward.z).normalized;
             Gizmos.DrawRay(transform.position, rayDirection * climbRayDis);
 
-            // 2. NORMAL GROUND CHECK (isOnGround)
+            // Normal Ground Check Box
             Gizmos.color = isOnGround ? Color.green : Color.red;
-
-            // El tamaño total de la caja del Gizmo debe ser el doble de los halfExtents del BoxCast
-            Vector3 boxSize = new Vector3(groundCheckBoxSize.x * 2f, 0.5f, groundCheckBoxSize.y * 2f);
+            Vector3 center = transform.position - Vector3.up * groundCheckDistance;
+            Vector3 size = new Vector3(groundCheckBoxSize.x, 0.5f, groundCheckBoxSize.y);
 
             Matrix4x4 oldMatrix = Gizmos.matrix;
-
-            // Caja en la posición inicial del gato
-            Gizmos.matrix = Matrix4x4.TRS(transform.position, transform.rotation, Vector3.one);
-            Gizmos.DrawWireCube(Vector3.zero, boxSize);
-
-            // Caja en la posición final a la que llega el barrido
-            Vector3 endPosition = transform.position + Vector3.down * groundCheckDistance;
-            Gizmos.matrix = Matrix4x4.TRS(endPosition, transform.rotation, Vector3.one);
-            Gizmos.DrawWireCube(Vector3.zero, boxSize);
-
-            // Línea central que conecta el inicio y el fin del barrido
+            Gizmos.matrix = Matrix4x4.TRS(center, transform.rotation, Vector3.one);
+            Gizmos.DrawWireCube(Vector3.zero, size);
             Gizmos.matrix = oldMatrix;
-            Gizmos.DrawLine(transform.position, endPosition);
         }
         else
         {
-            // 3. GROUNDED ON WALL CHECK (Permanencia en pared)
+            // Grounded on Wall Check
             Gizmos.color = isGroundedOnWall ? Color.green : Color.red;
             Gizmos.DrawRay(transform.position, -transform.up * groundCheckRayDis);
 
-            // 4. BOTTOM GROUND CHECK (hitsBottom)
+            // Bottom Ground Check Box
             Gizmos.color = Color.yellow;
-
-            Vector3 climbBoxSize = new Vector3(climbBottomBoxSize.x * 2f, 0.5f, climbBottomBoxSize.y * 2f);
+            Vector3 center = transform.position - Vector3.up * climbBottomDistance;
+            Vector3 size = new Vector3(climbBottomBoxSize.x, 0.5f, climbBottomBoxSize.y);
 
             Matrix4x4 oldMatrix = Gizmos.matrix;
-
-            // Caja inicial
-            Gizmos.matrix = Matrix4x4.TRS(transform.position, transform.rotation, Vector3.one);
-            Gizmos.DrawWireCube(Vector3.zero, climbBoxSize);
-
-            // Caja final del barrido hacia abajo
-            Vector3 endPositionClimb = transform.position + Vector3.down * climbBottomDistance;
-            Gizmos.matrix = Matrix4x4.TRS(endPositionClimb, transform.rotation, Vector3.one);
-            Gizmos.DrawWireCube(Vector3.zero, climbBoxSize);
-
+            Gizmos.matrix = Matrix4x4.TRS(center, transform.rotation, Vector3.one);
+            Gizmos.DrawWireCube(Vector3.zero, size);
             Gizmos.matrix = oldMatrix;
-            Gizmos.DrawLine(transform.position, endPositionClimb);
         }
     }
 

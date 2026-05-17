@@ -2527,16 +2527,16 @@ MonoBehaviour:
   - -50
   - 50
   groundCheckRayDis: 1
-  groundCheckBoxSize: {x: 0.5, y: 1, z: 0}
-  groundCheckDistance: 0.5
+  groundCheckBoxSize: {x: 0.75, y: 2.24, z: 0}
+  groundCheckDistance: 0.75
   isOnGround: 0
   climbMoveSpeedVer: 160
   climbMoveSpeedHor: 80
   climbRayDis: 1.5
   limitator: 10
   climbJumpVelHor: 50
-  climbBottomBoxSize: {x: 0.5, y: 0.5, z: 0}
-  climbBottomDistance: 0.5
+  climbBottomBoxSize: {x: 1.25, y: 0.5, z: 0}
+  climbBottomDistance: 1.5
   gatocidadClimb: 0.5
   gatocidadJump: 10
   gatocidadInfluence: 75
