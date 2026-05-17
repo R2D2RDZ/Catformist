@@ -2278,6 +2278,37 @@ Transform:
   - {fileID: 7629280560770743755}
   m_Father: {fileID: 6102074228108199507}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7411161649889709156
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 9191407617602233203}
+  m_Layer: 0
+  m_Name: GrabPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &9191407617602233203
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7411161649889709156}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.418, z: 1.098}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2226670221244776938}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7502993470229282402
 GameObject:
   m_ObjectHideFlags: 0
@@ -2443,9 +2474,12 @@ GameObject:
   - component: {fileID: 8578196017213557804}
   - component: {fileID: 5588210354730358085}
   - component: {fileID: 7263173413534681054}
+  - component: {fileID: 3918931639691894132}
+  - component: {fileID: 7971027056845290802}
   - component: {fileID: 2599392983302269607}
   - component: {fileID: 5972608912361136284}
   - component: {fileID: 7498148152224121712}
+  - component: {fileID: 7871260316984859403}
   m_Layer: 0
   m_Name: Cat
   m_TagString: Player
@@ -2468,6 +2502,7 @@ Transform:
   m_Children:
   - {fileID: 1427466092183501615}
   - {fileID: 7292005834788857956}
+  - {fileID: 9191407617602233203}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7449667449651218440
@@ -2499,6 +2534,9 @@ MonoBehaviour:
   limitator: 10
   climbJumpVelHor: 50
   climbGroundCheckRayDis: 1.8
+  gatocidadClimb: 0.5
+  gatocidadJump: 10
+  gatocidadInfluence: 75
   isClimbing: 0
   stateStunned: 0
   direction2D: {x: 0, y: 0, z: 0}
@@ -2563,6 +2601,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93b45c4cfdfe0144a86677f0895a60cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Cat_Inputs
+--- !u!114 &3918931639691894132
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7690910543258277792}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33930f37cd7005a4d98db116de805788, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Cat_Attack
+  slashRange: 2.2
+  slashRadius: 1
+  stunDuration: 3
+  slashCost: 20
+--- !u!114 &7971027056845290802
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7690910543258277792}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1432b1cdfbbca4044bf36dc13222b4e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Cat_Eat
+  grabPoint: {fileID: 9191407617602233203}
+  eatRange: 2.2
+  eatRadius: 1.5
 --- !u!136 &2599392983302269607
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -2643,6 +2712,21 @@ MonoBehaviour:
   m_DefaultActionMap: CatMap
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &7871260316984859403
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7690910543258277792}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a307f34f52b15b24e8984cbcd462858e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gatocidad
+  gatocidad: 100
+  maxGatocidad: 100
+  restoringSpeed: 1
 --- !u!1 &8010496881069444359
 GameObject:
   m_ObjectHideFlags: 0
