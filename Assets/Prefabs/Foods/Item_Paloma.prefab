@@ -282,6 +282,7 @@ GameObject:
   - component: {fileID: 8498807651087787089}
   - component: {fileID: -8826878355377023968}
   - component: {fileID: 2450682828517551866}
+  - component: {fileID: -765288370564736946}
   m_Layer: 0
   m_Name: Item_Paloma
   m_TagString: Food
@@ -322,9 +323,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17bf76fcd139d0840bf3bab12cb265fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Food
-  timeToEat: 3
-  gatocidadRestore: 20
-  maxGatocidadIncrease: 5
+  timeToEat: 0.5
+  gatocidadRestore: 5
+  maxGatocidadIncrease: 1
 --- !u!65 &-8826878355377023968
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -344,7 +345,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
+  m_Size: {x: 1, y: 0.45, z: 1.45}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &2450682828517551866
 Rigidbody:
@@ -373,6 +374,24 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &-765288370564736946
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3397248457184288454}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Outline
+  outlineMode: 0
+  outlineColor: {r: 0.55835617, g: 1, b: 0.3820755, a: 1}
+  outlineWidth: 10
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1 &3731155607679002781
 GameObject:
   m_ObjectHideFlags: 0
