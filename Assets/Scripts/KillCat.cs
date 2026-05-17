@@ -8,7 +8,7 @@ public class KillCat : MonoBehaviour
         Debug.Log(":0");
         if (other.CompareTag("Player"))
         {
-            Debug.Log("Pum pum lele pancha (gato muerto)");
+            other.GetComponent<Cat_Lives>().LoseLive();
         }
     }
 }
