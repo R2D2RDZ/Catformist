@@ -15,7 +15,9 @@ public class Cat_Movement : MonoBehaviour
     [SerializeField] private float[] jumpRotationAngles;
 
     [Header("Ground Check")]
-    [SerializeField] private float groundCheckRayDis;
+    [SerializeField] private float groundCheckRayDis; // Kept for wall check
+    [SerializeField] private Vector2 groundCheckBoxSize = new Vector2(0.5f, 0.5f);
+    [SerializeField] private float groundCheckDistance = 0.5f;
     [HideInInspector] public bool isOnGround; // Se usa en Cat_Animations.cs
 
     [Header("Climbing")]
@@ -24,13 +26,13 @@ public class Cat_Movement : MonoBehaviour
     [SerializeField] private float climbRayDis;
     [SerializeField] private float limitator;
     [SerializeField] private float climbJumpVelHor;
-    [SerializeField] private float climbGroundCheckRayDis;
+    [SerializeField] private Vector2 climbBottomBoxSize = new Vector2(0.5f, 0.5f);
+    [SerializeField] private float climbBottomDistance = 0.5f;
 
     [Header("Gatocidad")]
     private Gatocidad gatocidad;
     [SerializeField] private float gatocidadClimb;
     [SerializeField] private float gatocidadJump;
-    [SerializeField] private float gatocidadSlash;
     [SerializeField] private float gatocidadInfluence;
 
     private bool isHittingWall;
@@ -40,7 +42,7 @@ public class Cat_Movement : MonoBehaviour
     [HideInInspector] public bool isClimbing; // Se usa en Cat_Animations.cs
     [HideInInspector] public bool stateStunned;
 
-    private Rigidbody rb;
+    [HideInInspector] public Rigidbody rb;
     private Vector3 velocity;
 
     [HideInInspector] public Vector3 direction2D;
@@ -116,7 +118,7 @@ public class Cat_Movement : MonoBehaviour
 
         Quaternion tiltRotation = Quaternion.Euler(xAngle, 0f, 0f);
 
-        // Combina la rotaci髇 hacia la direcci髇 con la inclinaci髇 en X
+        // Combina la rotaci贸n hacia la direcci贸n con la inclinaci贸n en X
         targetRotation *= tiltRotation;
 
         rb.rotation = Quaternion.Slerp(rb.rotation, targetRotation, rotationSpeed);
@@ -136,7 +138,14 @@ public class Cat_Movement : MonoBehaviour
 
         if (!isClimbing)
         {
-            isOnGround = Physics.Raycast(ray, out RaycastHit hit, groundCheckRayDis, groundMask);
+            isOnGround = Physics.BoxCast(
+                transform.position,
+                groundCheckBoxSize,
+                groundCheckDistance,
+                -Vector3.up,
+                transform.rotation,
+                groundMask
+            );
         }
         else
         {
@@ -149,17 +158,19 @@ public class Cat_Movement : MonoBehaviour
                 groundMask
             );
 
-            // No detecta m醩 pared bajo sus pies
+            // No detecta m谩s pared bajo sus pies
             if (!isGroundedOnWall)
             {
                 StopClimbing();
             }
 
-            // Si llega al suelo arrastr醤dose por la pared
-            bool hitsBottom = Physics.Raycast(
-                ray,
-                out RaycastHit hitBottom,
-                climbGroundCheckRayDis,
+            // Si llega al suelo arrastr谩ndose por la pared
+            bool hitsBottom = Physics.BoxCast(
+                transform.position,
+                climbBottomBoxSize,
+                climbBottomDistance,
+                -Vector3.up,
+                transform.rotation,
                 groundMask
             );
 
@@ -209,7 +220,7 @@ public class Cat_Movement : MonoBehaviour
             {
                 Vector3 forwardOnWall = Vector3.ProjectOnPlane(Vector3.up, wallNormal).normalized;
 
-                // Rotaci髇 final:
+                // Rotaci贸n final:
                 // forward = hacia arriba en la pared
                 // up = normal de la pared
                 Quaternion targetRotation = Quaternion.LookRotation(forwardOnWall, wallNormal);
@@ -233,9 +244,15 @@ public class Cat_Movement : MonoBehaviour
                 new Vector3(transform.forward.x, 0f, transform.forward.z).normalized * climbRayDis
             );
 
-            // Normal Ground Check
+            // Normal Ground Check Box
             Gizmos.color = isOnGround ? Color.green : Color.red;
-            Gizmos.DrawRay(transform.position, -Vector3.up * groundCheckRayDis);
+            Vector3 center = transform.position - Vector3.up * groundCheckDistance;
+            Vector3 size = new Vector3(groundCheckBoxSize.x, 0.5f, groundCheckBoxSize.y);
+            
+            Matrix4x4 oldMatrix = Gizmos.matrix;
+            Gizmos.matrix = Matrix4x4.TRS(center, transform.rotation, Vector3.one);
+            Gizmos.DrawWireCube(Vector3.zero, size);
+            Gizmos.matrix = oldMatrix;
         }
         else
         {
@@ -243,9 +260,15 @@ public class Cat_Movement : MonoBehaviour
             Gizmos.color = isGroundedOnWall ? Color.green : Color.red;
             Gizmos.DrawRay(transform.position, -transform.up * groundCheckRayDis);
 
-            // Bottom Ground Check
+            // Bottom Ground Check Box
             Gizmos.color = Color.yellow;
-            Gizmos.DrawRay(transform.position, -Vector3.up * climbGroundCheckRayDis);
+            Vector3 center = transform.position - Vector3.up * climbBottomDistance;
+            Vector3 size = new Vector3(climbBottomBoxSize.x, 0.5f, climbBottomBoxSize.y);
+            
+            Matrix4x4 oldMatrix = Gizmos.matrix;
+            Gizmos.matrix = Matrix4x4.TRS(center, transform.rotation, Vector3.one);
+            Gizmos.DrawWireCube(Vector3.zero, size);
+            Gizmos.matrix = oldMatrix;
         }
     }
 
@@ -259,9 +282,10 @@ public class Cat_Movement : MonoBehaviour
     {
         if (gatocidad.GetGatocidad() >= gatocidadJump)
         {    
-            gatocidad.UseGatocidad(gatocidadJump);
+            
             if (isOnGround && !isClimbing)
             {
+                gatocidad.UseGatocidad(gatocidadJump);
                 rb.linearVelocity = new Vector3(
                     rb.linearVelocity.x,
                     jumpVelocity,
@@ -270,6 +294,7 @@ public class Cat_Movement : MonoBehaviour
             }
             else if (isClimbing)
             {
+                gatocidad.UseGatocidad(gatocidadJump);
                 Vector3 transformUp = transform.up;
 
                 StartCoroutine(StopCheckingIfCanClimb());
@@ -295,6 +320,25 @@ public class Cat_Movement : MonoBehaviour
 
     public void Stun(float stunDuration)
     {
+        if (!stateStunned)
+        {
+            StartCoroutine(StunRoutine(stunDuration));
+        }
+    }
 
+    private IEnumerator StunRoutine(float duration)
+    {
+        stateStunned = true;
+        
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector3.zero;
+        }
+        direction2D = Vector2.zero;
+        direction3D = Vector3.zero;
+        
+        yield return new WaitForSeconds(duration);
+        
+        stateStunned = false;
     }
 }

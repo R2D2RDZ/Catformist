@@ -34,7 +34,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "GrabEat",
+                    "name": "Eat",
                     "type": "Button",
                     "id": "0c76ebd6-92e6-4510-a04e-48974339e291",
                     "expectedControlType": "",
@@ -161,7 +161,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "GrabEat",
+                    "action": "Eat",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -172,7 +172,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "GrabEat",
+                    "action": "Eat",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
