@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem; // Requerido para detectar el Enter de forma nativa
+using TMPro;
 
 public class RoundSystem : MonoBehaviour
 {
@@ -22,8 +23,11 @@ public class RoundSystem : MonoBehaviour
 
     [Header("Match Settings")]
     private const int TOTAL_ROUNDS = 7;
-    private const float ROUND_DURATION = 60f; // 1 minuto
+    private const float ROUND_DURATION = 5f; // 1 minuto
     private const float BREAK_DURATION = 5f;  // 5 segundos
+
+    [Header("UI")]
+    [SerializeField] private TMP_Text RoundNumber;
 
     [HideInInspector] public int currentRound = 0;
     [HideInInspector] public float timeRemaining = 0f;
@@ -76,11 +80,28 @@ public class RoundSystem : MonoBehaviour
         }
     }
 
+    public void RemovePlayer(GameObject player)
+    {
+        int index = players.IndexOf(player);
+        if (index != -1)
+        {
+            players[index] = null; // Borrado lógico: El gato se vuelve null, pero el espacio (index) se mantiene intacto
+            Debug.Log($"¡{player.name} (Jugador {index + 1}) ha sido eliminado lógicamente por quedarse sin vidas!");
+        }
+    }
+
     private void StartGame()
     {
         gameStarted = true;
         currentRound = 0;
         Debug.Log("¡Partida Iniciada!");
+
+        PlayerInputManager inputManager = Object.FindAnyObjectByType<PlayerInputManager>();
+        if (inputManager != null)
+        {
+            inputManager.DisableJoining();
+            Debug.Log("Lobby cerrado: Ya no se permite la entrada de nuevos michis.");
+        }
 
         StartCoroutine(MatchLoopRoutine());
     }
@@ -163,6 +184,8 @@ public class RoundSystem : MonoBehaviour
 
         // 4. Aparecer los enemigos en puntos aleatorios
         SpawnEnemies();
+
+        UpdateUI();
     }
 
     private void ResetAndPositionPlayers()
@@ -265,7 +288,7 @@ public class RoundSystem : MonoBehaviour
         }
         spawnedEnemies.Clear();
     }
-    private void PositionSinglePlayer(int index)
+    public void PositionSinglePlayer(int index)
     {
         if (index >= players.Count || players[index] == null) return;
         if (index >= playerSpawnPoints.Length || playerSpawnPoints[index] == null) return;
@@ -291,5 +314,25 @@ public class RoundSystem : MonoBehaviour
         {
             gatocidadScript.ResetGatocidad();
         }
+    }
+    public void PositionSinglePlayer(GameObject player)
+    {
+        // Buscamos qué posición ocupa este gato en la lista global del juego
+        int index = players.IndexOf(player);
+
+        // Si el jugador existe en la partida, lo mandamos al método principal
+        if (index != -1)
+        {
+            PositionSinglePlayer(index);
+        }
+        else
+        {
+            Debug.LogWarning($"No se pudo reposicionar a {player.name} porque no está registrado en el RoundSystem.");
+        }
+    }
+    
+    void UpdateUI()
+    {
+        RoundNumber.text = (currentRound-1).ToString();
     }
 }

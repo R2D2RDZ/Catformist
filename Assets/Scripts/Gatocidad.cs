@@ -5,6 +5,7 @@ public class Gatocidad : MonoBehaviour
     [SerializeField] float gatocidad = 100f;
     [SerializeField] float maxGatocidad = 100f;
     [SerializeField] float restoringSpeed = 1f;
+    [SerializeField] float lostPercentage = 0.8f;
 
     /// <summary>
     /// Se llama en cada frame de fÃ­sicas. Regenera pasivamente la gatocidad con el paso del tiempo.
@@ -58,6 +59,11 @@ public class Gatocidad : MonoBehaviour
     public void IncreaseMaxGatocidad(float amount)
     {
         maxGatocidad += amount;
+    }
+
+    public void LoseGatocidad()
+    {
+        maxGatocidad = maxGatocidad * lostPercentage;
     }
 }
 
