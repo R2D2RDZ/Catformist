@@ -2580,6 +2580,12 @@ MonoBehaviour:
     - {fileID: 2100000, guid: 57a1045d4e17285429d8f498f8ddc523, type: 2}
     - {fileID: 2100000, guid: 596bdd3031414654c953f74aabae9a89, type: 2}
     - {fileID: 2100000, guid: 3ebcfe01428982f4b83ab0f1cf6fbf54, type: 2}
+  catMovementScr: {fileID: 7449667449651218440}
+  catInputsScr: {fileID: 7263173413534681054}
+  catAttackScr: {fileID: 3918931639691894132}
+  catEatScr: {fileID: 7971027056845290802}
+  catAnimationsScr: {fileID: 5588210354730358085}
+  gatocidadScr: {fileID: 7871260316984859403}
 --- !u!114 &5588210354730358085
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2748,7 +2754,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Gatocidad
   gatocidad: 100
   maxGatocidad: 100
-  restoringSpeed: 1
+  restoringSpeed: 4
 --- !u!1 &8010496881069444359
 GameObject:
   m_ObjectHideFlags: 0
