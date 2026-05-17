@@ -24,7 +24,7 @@ public class RoundSystem : MonoBehaviour
 
     [Header("Match Settings")]
     private const int TOTAL_ROUNDS = 7;
-    private const float ROUND_DURATION = 5f; // 1 minuto
+    private const float ROUND_DURATION = 60f; // 1 minuto
     private const float BREAK_DURATION = 5f;  // 5 segundos
 
     [Header("UI")]
@@ -34,6 +34,8 @@ public class RoundSystem : MonoBehaviour
     [HideInInspector] public float timeRemaining = 0f;
     [HideInInspector] public bool isRoundActive = false;
     [HideInInspector] public bool isBreakActive = false;
+
+    [SerializeField] private Transform safeSpaceDog;
 
     private bool gameStarted = false;
 
@@ -269,6 +271,12 @@ public class RoundSystem : MonoBehaviour
             GameObject newEnemy = Instantiate(prefabToSpawn, spawnPoint.position, spawnPoint.rotation);
             spawnedEnemies.Add(newEnemy);
             newEnemy.GetComponentInChildren<Patrol>().targets = enemySpawnPoints;
+            if (newEnemy.name == "SmallDog(Clone)")
+            {
+                Debug.Log("Chihuahua");
+                newEnemy.GetComponentInChildren<smallDogScript>().safeSpace = safeSpaceDog;
+                //newEnemy.GetComponentInChildren<Transform>().GetComponentInChildren<smallDogScript>().safeSpace = safeSpaceDog;
+            }
 
             availablePoints.RemoveAt(randomPointIndex);
         }

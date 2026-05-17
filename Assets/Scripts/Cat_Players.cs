@@ -19,6 +19,7 @@ public class Cat_Players : MonoBehaviour
     public Cat_Movement catMovementScr;
     public Cat_Inputs catInputsScr;
     public Cat_Attack catAttackScr;
+    public Cat_Lives catLivesScr;
     public Cat_Eat catEatScr;
     public Cat_Animations catAnimationsScr;
     public Gatocidad gatocidadScr;
