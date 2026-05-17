@@ -31,6 +31,7 @@ public class RoundSystem : MonoBehaviour
     [SerializeField] private TMP_Text roundNumber;
     [SerializeField] private TMP_Text timer;
     [SerializeField] private TMP_Text timerBreak;
+    [SerializeField] private TMP_Text winner;
 
     [HideInInspector] public int currentRound = 0;
     [HideInInspector] public float timeRemaining = 0f;
@@ -133,7 +134,7 @@ public class RoundSystem : MonoBehaviour
             while (timeRemaining > 0)
             {
                 timeRemaining -= Time.deltaTime;
-                timer.text = Mathf.RoundToInt(timeRemaining).ToString();
+                timer.text = Mathf.RoundToInt(timeRemaining).ToString() + "s";
                 if (spawnedFood.Count == 0)
                 {
                     timeRemaining = 0;
@@ -149,6 +150,7 @@ public class RoundSystem : MonoBehaviour
             if (currentRound < TOTAL_ROUNDS)
             {
                 isBreakActive = true;
+                timerBreak.enabled = true;
                 timeRemaining = BREAK_DURATION;
 
                 // Limpiamos los enemigos y comida inmediatamente al acabar la ronda para el descanso
@@ -158,12 +160,13 @@ public class RoundSystem : MonoBehaviour
                 while (timeRemaining > 0)
                 {
                     timeRemaining -= Time.deltaTime;
-                    timerBreak.text = Mathf.RoundToInt(timeRemaining).ToString();
+                    timerBreak.text = "Next round in " + Mathf.RoundToInt(timeRemaining).ToString();
                     // Debug.Log($"Descanso - Siguiente ronda en: {timeRemaining:F1}s");
                     yield return null;
                 }
 
                 isBreakActive = false;
+                timerBreak.enabled = false;
             }
         }
 
@@ -181,6 +184,31 @@ public class RoundSystem : MonoBehaviour
         Debug.Log("=====================================");
         Debug.Log("¡PARTIDA FINALIZADA! Completadas las 7 rondas.");
         Debug.Log("=====================================");
+
+        
+
+        int winnerIndex = 0;
+        float winnerValue = 0;
+        foreach (GameObject player in players)
+        {
+            float value = player.GetComponent<Gatocidad>().maxGatocidad;
+            if (value > winnerValue) { 
+                winnerValue = value; 
+                winnerIndex = players.IndexOf(player);
+            }
+        }
+        Color[] playersColors = new Color[4];
+        playersColors[0] = new Color(1, 1, 1);
+        playersColors[1] = new Color(1, 0.6090132f, 0.2471698f);
+        playersColors[2] = new Color(0, 0, 0);
+        playersColors[3] = new Color(0.5471698f, 0.3538956f, 0.221965f);
+
+        winner.enabled = true;
+
+        winner.text = "The winner is P" + (winnerIndex+1).ToString();
+        winner.color = playersColors[winnerIndex];
+
+
 
         // Aquí podrías activar una pantalla de puntuaciones, victoria, etc.
     }
@@ -378,6 +406,6 @@ public class RoundSystem : MonoBehaviour
     
     void UpdateUI()
     {
-        roundNumber.text = (currentRound-1).ToString();
+        roundNumber.text = "Round " +(currentRound-1).ToString();
     }
 }
