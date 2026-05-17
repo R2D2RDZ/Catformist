@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Gatocidad : MonoBehaviour
 {
@@ -7,7 +7,7 @@ public class Gatocidad : MonoBehaviour
     [SerializeField] float restoringSpeed = 1f;
 
     /// <summary>
-    /// Se llama en cada frame de físicas. Regenera pasivamente la gatocidad con el paso del tiempo.
+    /// Se llama en cada frame de fÃ­sicas. Regenera pasivamente la gatocidad con el paso del tiempo.
     /// </summary>
     private void FixedUpdate()
     {
@@ -27,7 +27,7 @@ public class Gatocidad : MonoBehaviour
     /// Intenta consumir una cantidad de gatocidad.
     /// </summary>
     /// <param name="amount">La cantidad de gatocidad a consumir.</param>
-    /// <returns>Devuelve true si había suficiente gatocidad y se consumió, false en caso contrario.</returns>
+    /// <returns>Devuelve true si habÃ­a suficiente gatocidad y se consumiÃ³, false en caso contrario.</returns>
     public bool UseGatocidad(float amount)
     {
         if (amount > gatocidad)
@@ -39,20 +39,25 @@ public class Gatocidad : MonoBehaviour
     }
 
     /// <summary>
-    /// Añade una cantidad específica a la gatocidad actual.
+    /// AÃ±ade una cantidad especÃ­fica a la gatocidad actual.
     /// </summary>
-    /// <param name="amount">La cantidad a añadir.</param>
+    /// <param name="amount">La cantidad a aÃ±adir.</param>
     public void RestoreGatocidad(float amount)
     {
         gatocidad = Mathf.Min(gatocidad + amount, maxGatocidad);
     }
 
     /// <summary>
-    /// Restablece la gatocidad a su valor máximo.
+    /// Restablece la gatocidad a su valor mÃ¡ximo.
     /// </summary>
     public void ResetGatocidad()
     {
         gatocidad = maxGatocidad;
     }
 
+    public void IncreaseMaxGatocidad(float amount)
+    {
+        maxGatocidad += amount;
+    }
 }
+
