@@ -1713,7 +1713,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoundSystem
   playerSpawnPoints: []
   players: []
-  foodPrefabs: []
+  foodPrefabs:
+  - {fileID: 5110312884523750662, guid: 4c9e93e41e4beba4b82573c2314f8bc0, type: 3}
+  - {fileID: 7932633325014396817, guid: 24812bfe5c2a1eb4692ef1d9b582634f, type: 3}
+  - {fileID: 2220555385073036693, guid: 3d3d9f6a5b445a54d8b1efe044e1a457, type: 3}
+  - {fileID: 594796208687989030, guid: d1bf4206e6050944f986e93c750ae05a, type: 3}
+  - {fileID: 3397248457184288454, guid: 50e72c78b171cbd45b6d9f68b98c4718, type: 3}
+  - {fileID: 2475772214247250358, guid: 1a1006076eb43b5469d92c7933a4613a, type: 3}
   foodSpawnPoints: []
   foodCountPerRound: 5
   enemyPrefabs: []
