@@ -183,9 +183,9 @@ public class Cat_Movement : MonoBehaviour
 
         if (direction3D.magnitude < 0.1f || direction3D.z < 0f)
         {
-            gatocidad.UseGatocidad(gatocidadClimb);
             climbUpVector = -transform.forward * climbMoveSpeedVer;
         }
+        else gatocidad.UseGatocidad(gatocidadClimb);
 
         rb.AddForce(climbUpVector + direction2D.x * transform.right * climbMoveSpeedHor);
         rb.AddForce(-rb.linearVelocity * limitator);

@@ -19,7 +19,6 @@ public class dogDetectArea : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            Debug.Log(other.gameObject.GetComponent<Cat_Movement>().rb.linearVelocity.magnitude);
             if (other.gameObject.GetComponent<Cat_Movement>().rb.linearVelocity.magnitude > speedThreshold)
             {
                 playerTransform = other.transform;

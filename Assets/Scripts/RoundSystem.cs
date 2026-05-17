@@ -1,6 +1,8 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem; // Requerido para detectar el Enter de forma nativa
+using TMPro;
 
 public class RoundSystem : MonoBehaviour
 {
@@ -19,7 +21,19 @@ public class RoundSystem : MonoBehaviour
     [SerializeField] private Transform[] enemySpawnPoints;
     [SerializeField] private int enemyCountPerRound = 3;
 
-    private int currentRound = 0;
+    [Header("Match Settings")]
+    private const int TOTAL_ROUNDS = 7;
+    private const float ROUND_DURATION = 5f; // 1 minuto
+    private const float BREAK_DURATION = 5f;  // 5 segundos
+
+    [Header("UI")]
+    [SerializeField] private TMP_Text RoundNumber;
+
+    [HideInInspector] public int currentRound = 0;
+    [HideInInspector] public float timeRemaining = 0f;
+    [HideInInspector] public bool isRoundActive = false;
+    [HideInInspector] public bool isBreakActive = false;
+
     private bool gameStarted = false;
 
     // Listas internas para rastrear y limpiar los objetos clonados en cada ronda
@@ -38,23 +52,120 @@ public class RoundSystem : MonoBehaviour
         // if (gameStarted && Keyboard.current.nKey.wasPressedThisFrame) { StartNextRound(); }
     }
 
+    public void OnPlayerJoined(PlayerInput playerInput)
+    {
+        GameObject newPlayer = playerInput.gameObject;
+
+        if (!players.Contains(newPlayer))
+        {
+            players.Add(newPlayer);
+            Debug.Log($"¡{newPlayer.name} (Jugador {players.Count}) se ha unido a la partida!");
+
+            // Si un jugador se une "tarde" cuando la ronda ya empezó, 
+            // lo teletransportamos de inmediato a su spawn para que no se quede flotando
+            if (gameStarted)
+            {
+                PositionSinglePlayer(players.Count - 1);
+            }
+        }
+    }
+
+    // Opcional: Si un jugador se desconecta, lo removemos de la lista
+    public void OnPlayerLeft(PlayerInput playerInput)
+    {
+        if (players.Contains(playerInput.gameObject))
+        {
+            players.Remove(playerInput.gameObject);
+            Debug.Log($"El jugador {playerInput.gameObject.name} ha abandonado la partida.");
+        }
+    }
+
+    public void RemovePlayer(GameObject player)
+    {
+        int index = players.IndexOf(player);
+        if (index != -1)
+        {
+            players[index] = null; // Borrado lógico: El gato se vuelve null, pero el espacio (index) se mantiene intacto
+            Debug.Log($"¡{player.name} (Jugador {index + 1}) ha sido eliminado lógicamente por quedarse sin vidas!");
+        }
+    }
+
     private void StartGame()
     {
         gameStarted = true;
         currentRound = 0;
         Debug.Log("¡Partida Iniciada!");
 
-        // Si no asignaste jugadores manualmente en el Inspector, los buscamos por su script de movimiento
-        if (players.Count == 0)
+        PlayerInputManager inputManager = Object.FindAnyObjectByType<PlayerInputManager>();
+        if (inputManager != null)
         {
-            Cat_Movement[] catMovements = Object.FindObjectsByType<Cat_Movement>();
-            foreach (var cat in catMovements)
+            inputManager.DisableJoining();
+            Debug.Log("Lobby cerrado: Ya no se permite la entrada de nuevos michis.");
+        }
+
+        StartCoroutine(MatchLoopRoutine());
+    }
+
+    private IEnumerator MatchLoopRoutine()
+    {
+        for (int i = 1; i <= TOTAL_ROUNDS; i++)
+        {
+            // --- FASE 1: INICIAR Y CONFIGURAR LA RONDA ---
+            currentRound = i;
+            StartNextRound(); // Limpia el mapa, spawnea comida/enemigos y resetea michis
+
+            isRoundActive = true;
+            isBreakActive = false;
+            timeRemaining = ROUND_DURATION;
+
+            // Cuenta regresiva del minuto de juego
+            while (timeRemaining > 0)
             {
-                players.Add(cat.gameObject);
+                timeRemaining -= Time.deltaTime;
+                // Debug.Log($"Ronda {currentRound} - Tiempo restante: {timeRemaining:F1}s");
+                yield return null; // Espera al siguiente frame
+            }
+
+            isRoundActive = false;
+            Debug.Log($"=== ¡Fin de la Ronda {currentRound}! ===");
+
+            // --- FASE 2: DESCANSO DE 5 SEGUNDOS (Solo si no es la última ronda) ---
+            if (currentRound < TOTAL_ROUNDS)
+            {
+                isBreakActive = true;
+                timeRemaining = BREAK_DURATION;
+
+                // Limpiamos los enemigos y comida inmediatamente al acabar la ronda para el descanso
+                ClearPreviousRoundObjects();
+                Debug.Log($"Iniciando descanso de {BREAK_DURATION} segundos...");
+
+                while (timeRemaining > 0)
+                {
+                    timeRemaining -= Time.deltaTime;
+                    // Debug.Log($"Descanso - Siguiente ronda en: {timeRemaining:F1}s");
+                    yield return null;
+                }
+
+                isBreakActive = false;
             }
         }
 
-        StartNextRound();
+        // --- FASE 3: FIN DEL JUEGO (Al completar las 7 rondas) ---
+        FinishMatch();
+    }
+
+    private void FinishMatch()
+    {
+        gameStarted = false;
+        isRoundActive = false;
+        isBreakActive = false;
+        ClearPreviousRoundObjects();
+
+        Debug.Log("=====================================");
+        Debug.Log("¡PARTIDA FINALIZADA! Completadas las 7 rondas.");
+        Debug.Log("=====================================");
+
+        // Aquí podrías activar una pantalla de puntuaciones, victoria, etc.
     }
 
     public void StartNextRound()
@@ -73,6 +184,8 @@ public class RoundSystem : MonoBehaviour
 
         // 4. Aparecer los enemigos en puntos aleatorios
         SpawnEnemies();
+
+        UpdateUI();
     }
 
     private void ResetAndPositionPlayers()
@@ -114,7 +227,7 @@ public class RoundSystem : MonoBehaviour
     private void SpawnFood()
     {
         if (foodPrefabs.Length == 0 || foodSpawnPoints.Length == 0) return;
-
+        Debug.Log("Apareciendo comida");
         // Creamos una copia de los spawnpoints para mezclarlos y evitar que aparezcan dos comidas en el mismo sitio
         List<Transform> availablePoints = new List<Transform>(foodSpawnPoints);
 
@@ -174,5 +287,52 @@ public class RoundSystem : MonoBehaviour
             if (enemy != null) Destroy(enemy);
         }
         spawnedEnemies.Clear();
+    }
+    public void PositionSinglePlayer(int index)
+    {
+        if (index >= players.Count || players[index] == null) return;
+        if (index >= playerSpawnPoints.Length || playerSpawnPoints[index] == null) return;
+
+        GameObject player = players[index];
+        Transform spawnPoint = playerSpawnPoints[index];
+
+        // Reset físico para evitar tirones
+        Cat_Movement moveScript = player.GetComponent<Cat_Movement>();
+        if (moveScript != null && moveScript.rb != null)
+        {
+            moveScript.rb.linearVelocity = Vector3.zero;
+            moveScript.rb.angularVelocity = Vector3.zero;
+            moveScript.rb.position = spawnPoint.position;
+        }
+
+        player.transform.position = spawnPoint.position;
+        player.transform.rotation = spawnPoint.rotation;
+
+        // Reset de Gatocidad
+        Gatocidad gatocidadScript = player.GetComponent<Gatocidad>();
+        if (gatocidadScript != null)
+        {
+            gatocidadScript.ResetGatocidad();
+        }
+    }
+    public void PositionSinglePlayer(GameObject player)
+    {
+        // Buscamos qué posición ocupa este gato en la lista global del juego
+        int index = players.IndexOf(player);
+
+        // Si el jugador existe en la partida, lo mandamos al método principal
+        if (index != -1)
+        {
+            PositionSinglePlayer(index);
+        }
+        else
+        {
+            Debug.LogWarning($"No se pudo reposicionar a {player.name} porque no está registrado en el RoundSystem.");
+        }
+    }
+    
+    void UpdateUI()
+    {
+        RoundNumber.text = (currentRound-1).ToString();
     }
 }

@@ -2476,6 +2476,7 @@ GameObject:
   - component: {fileID: 7263173413534681054}
   - component: {fileID: 3918931639691894132}
   - component: {fileID: 7971027056845290802}
+  - component: {fileID: 8525038684581930922}
   - component: {fileID: 2599392983302269607}
   - component: {fileID: 5972608912361136284}
   - component: {fileID: 7498148152224121712}
@@ -2579,6 +2580,12 @@ MonoBehaviour:
     - {fileID: 2100000, guid: 57a1045d4e17285429d8f498f8ddc523, type: 2}
     - {fileID: 2100000, guid: 596bdd3031414654c953f74aabae9a89, type: 2}
     - {fileID: 2100000, guid: 3ebcfe01428982f4b83ab0f1cf6fbf54, type: 2}
+  catMovementScr: {fileID: 7449667449651218440}
+  catInputsScr: {fileID: 7263173413534681054}
+  catAttackScr: {fileID: 3918931639691894132}
+  catEatScr: {fileID: 7971027056845290802}
+  catAnimationsScr: {fileID: 5588210354730358085}
+  gatocidadScr: {fileID: 7871260316984859403}
 --- !u!114 &5588210354730358085
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2605,7 +2612,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93b45c4cfdfe0144a86677f0895a60cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Cat_Inputs
-  eatAction: {fileID: 0}
+  isEatPressed: 0
+  wasEatPressed: 0
+  wasEatReleased: 0
 --- !u!114 &3918931639691894132
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2637,6 +2646,20 @@ MonoBehaviour:
   grabPoint: {fileID: 9191407617602233203}
   eatRange: 2.2
   eatRadius: 1.5
+--- !u!114 &8525038684581930922
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7690910543258277792}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96d5e5ab87678bf4caddef2c864b104e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Cat_Lives
+  maxLives: 7
+  spawnPoints: []
 --- !u!136 &2599392983302269607
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -2731,7 +2754,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Gatocidad
   gatocidad: 100
   maxGatocidad: 100
-  restoringSpeed: 1
+  restoringSpeed: 4
 --- !u!1 &8010496881069444359
 GameObject:
   m_ObjectHideFlags: 0
