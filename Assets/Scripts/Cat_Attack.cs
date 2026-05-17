@@ -10,6 +10,8 @@ public class Cat_Attack : MonoBehaviour
 
     private Gatocidad gatocidad;
 
+    [SerializeField] private Cat_Animations catAnimationsScr;
+
     private void Start()
     {
         gatocidad = GetComponent<Gatocidad>();
@@ -40,6 +42,8 @@ public class Cat_Attack : MonoBehaviour
                 hitCollider.GetComponent<Cat_Eat>().DropFood();
             }
         }
+
+        catAnimationsScr.StartCoroutine(catAnimationsScr.PlaySlashAnimation());
     }
 
     private void OnDrawGizmosSelected()
