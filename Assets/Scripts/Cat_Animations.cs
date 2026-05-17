@@ -5,7 +5,7 @@ using static UI_Cats;
 
 public class Cat_Animations : MonoBehaviour
 {
-    [SerializeField] private Animator animator;
+    public Animator animator;
     [SerializeField] private float groundMoveMult;
     [SerializeField] private float secondsSlashToNormal;
 
@@ -15,6 +15,7 @@ public class Cat_Animations : MonoBehaviour
 
     [Header("KnockOut")]
     [SerializeField] private CapsuleCollider mainCollider;
+    [SerializeField] private Rigidbody headRB;
     [SerializeField] private Collider[] koColliders;
     [SerializeField] private Rigidbody[] koRbs;
     [SerializeField] private ConfigurableJoint[] looseJoints;
@@ -63,7 +64,14 @@ public class Cat_Animations : MonoBehaviour
 
 
 
-
+    public void PushedWithSlash(Vector3 enemyTransformForward)
+    {
+        headRB.AddForce(enemyTransformForward * catMovementScr.slashKnockback * 20);
+        foreach (Rigidbody indRB in koRbs)
+        {
+            indRB.AddForce(enemyTransformForward * catMovementScr.slashKnockback);
+        }
+    }
 
     // Ragdoll
 
